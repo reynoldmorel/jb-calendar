@@ -3,6 +3,7 @@ export interface IReminder {
     from: Date;
     to: Date;
     city: string;
+    color: string;
     description?: string;
     recurrent?: boolean;
 }
