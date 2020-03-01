@@ -4,7 +4,7 @@ import moment from "moment";
 import { IReminder } from "../entties/reminder.entity";
 import {
     setReminder, setReminders, setRemindersForDate,
-    setRemindersForDateYearAndMonth, setRemindersGroupedByDate, resetReminderFlags
+    setRemindersForDateYearAndMonth, setRemindersGroupedByDate, resetReminderFlags, setReminderCreatedFlag, setReminderUpdatedFlag, setReminderDeletedFlag
 } from "../redux/reminder/actions.redux";
 import { DateUtil } from "../utils/date.util";
 import { WeatherService } from "./weather.service";
@@ -46,33 +46,40 @@ export class ReminderService {
 
     static create(reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) {
         return (dispatch: Dispatch) => {
-            const newReminders = [reminder].concat(reminders);
             const dateKeys = DateUtil.generateReminderDateKeys(reminder);
-            const newRemindersGroupedByDate = ReminderService.groupReminder(reminder, dateKeys, remindersGroupedByDate);
 
-            dispatch(setReminders(newReminders));
-            dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+            if (dateKeys.length > 0) {
+                const newReminders = [reminder].concat(reminders);
+                const newRemindersGroupedByDate = ReminderService.groupReminder(reminder, dateKeys, remindersGroupedByDate);
+
+                dispatch(setReminderCreatedFlag(true));
+                dispatch(setReminders(newReminders));
+                dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+            }
+            dispatch(setReminderCreatedFlag(false));
         }
     }
 
     static update(reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) {
         return (dispatch: Dispatch) => {
             const oldReminder = reminders.find(r => r.id === reminder.id);
+            const dateKeys = DateUtil.generateReminderDateKeys(reminder);
             let newReminders: IReminder[] = Object.assign([], reminders);
             let newRemindersGroupedByDate: ReminderGroup = Object.assign({}, remindersGroupedByDate);
 
-            if (oldReminder) {
+            if (oldReminder && dateKeys.length > 0) {
                 newReminders = reminders.filter(r => r.id !== reminder.id);
                 const oldDateKeys = DateUtil.generateReminderDateKeys(oldReminder);
                 newRemindersGroupedByDate = ReminderService.removeGroupReminder(reminder, oldDateKeys, remindersGroupedByDate);
+
+                newReminders = [reminder].concat(newReminders);
+                newRemindersGroupedByDate = ReminderService.groupReminder(reminder, dateKeys, remindersGroupedByDate);
+
+                dispatch(setReminderUpdatedFlag(true));
+                dispatch(setReminders(newReminders));
+                dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
             }
-
-            newReminders = [reminder].concat(newReminders);
-            const dateKeys = DateUtil.generateReminderDateKeys(reminder);
-            newRemindersGroupedByDate = ReminderService.groupReminder(reminder, dateKeys, remindersGroupedByDate);
-
-            dispatch(setReminders(newReminders));
-            dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+            dispatch(setReminderUpdatedFlag(false));
         }
     }
 
@@ -81,13 +88,19 @@ export class ReminderService {
             const reminder = reminders.find(r => r.id === id);
 
             if (reminder) {
-                const newReminders = reminders.filter(r => r.id !== id);
                 const dateKeys = DateUtil.generateReminderDateKeys(reminder);
-                const newRemindersGroupedByDate = ReminderService.removeGroupReminder(reminder, dateKeys, remindersGroupedByDate);
 
-                dispatch(setReminders(newReminders));
-                dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+                if (dateKeys.length > 0) {
+                    const newReminders = reminders.filter(r => r.id !== id);
+                    const newRemindersGroupedByDate = ReminderService.removeGroupReminder(reminder, dateKeys, remindersGroupedByDate);
+
+                    dispatch(setReminderDeletedFlag(true));
+                    dispatch(setReminders(newReminders));
+                    dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+                }
             }
+
+            dispatch(setReminderDeletedFlag(false));
         }
     }
 

@@ -1,5 +1,5 @@
 export interface IReminder {
-    id?: string;
+    id?: number;
     title?: string;
     description?: string;
     fromDateStr?: string;
