@@ -28,7 +28,7 @@ export class DateUtil {
     static generateDateKeysFromDateRange(from: Date, to: Date): string[] {
         let result: string[] = [];
         let date = moment(from);
-        let totalDays = date.diff(to, 'days');
+        let totalDays = moment(to).diff(from, 'days');
 
         for (let i = 0; i < totalDays; i++) {
             const dateKey = date.format(process.env.REACT_APP_DATE_FORMAT);

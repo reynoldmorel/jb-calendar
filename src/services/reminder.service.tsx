@@ -3,7 +3,8 @@ import moment from "moment";
 
 import { IReminder } from "../entties/reminder.entity";
 import {
-    setReminder, setReminders, setRemindersForDate, setRemindersForDateYearAndMonth, setRemindersGroupedByDate
+    setReminder, setReminders, setRemindersForDate,
+    setRemindersForDateYearAndMonth, setRemindersGroupedByDate
 } from "../redux/reminder/actions.redux";
 import { DateUtil } from "../utils/date.util";
 import { WeatherService } from "./weather.service";
