@@ -1,9 +1,17 @@
 import React from 'react';
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-function App() {
+import ReminderPage from "./pages/reminder/page";
+
+const App = () => {
   return (
     <div className="App">
-      Content here
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={ReminderPage} />
+          <Route exact path="/reminders" component={ReminderPage} />
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 }

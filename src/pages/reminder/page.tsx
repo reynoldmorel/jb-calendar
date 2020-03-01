@@ -4,9 +4,12 @@ import { connect } from "react-redux";
 import { IReminderPageProps, MapStateToProps, MapDispatchToProps } from "./page-props";
 
 class ReminderPage extends PureComponent<IReminderPageProps> {
+
     render() {
         return (
-            <div></div>
+            <div>
+                Content Here
+            </div>
         );
     }
 }

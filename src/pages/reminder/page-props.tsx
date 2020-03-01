@@ -1,5 +1,6 @@
 import { ThunkDispatch } from "redux-thunk";
 import { Action } from "redux";
+import { RouteComponentProps } from "react-router-dom";
 
 import { IReminderStore } from "../../redux/reminder/store.redux";
 import {
@@ -14,8 +15,9 @@ import { IReminder } from "../../entties/reminder.entity";
 import { ReminderService } from "../../services/reminder.service";
 
 type ReminderGroup = { [key: string]: IReminder[] };
+type Store = { reminderStore: IReminderStore };
 
-export interface IReminderPageProps {
+export interface IReminderPageProps extends RouteComponentProps<{}> {
     reminder: IReminder;
     reminders: IReminder[];
     remindersForDate: IReminder[];
@@ -38,7 +40,7 @@ export interface IReminderPageProps {
     deleteById: (reminders: IReminder[], remindersGroupedByDate: ReminderGroup, id?: number) => void;
 }
 
-export const MapStateToProps = (reminderStore: IReminderStore) => (
+export const MapStateToProps = ({ reminderStore }: Store) => (
     {
         ...reminderStore,
         formValid: validateForm(reminderStore),
