@@ -22,7 +22,7 @@ export const ReminderStoreInitialState: IReminderStore = {
         fromTimeStr: process.env.REACT_APP_INPUT_DEFAULT_TIME_FROM,
         toTimeStr: process.env.REACT_APP_INPUT_DEFAULT_TIME_TO,
         city: "",
-        color: "",
+        color: "#6c757d",
         recurrenceForAYear: false
     },
     reminders: [],

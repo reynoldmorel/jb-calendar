@@ -8,8 +8,8 @@ const App = () => {
     <div className="App">
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" render={() => (<Redirect to="/reminders" />)} />
           <Route exact path="/reminders" component={ReminderPage} />
+          <Route render={() => (<Redirect to="/reminders" />)} />
         </Switch>
       </BrowserRouter>
     </div>

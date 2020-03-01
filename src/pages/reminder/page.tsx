@@ -137,7 +137,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 <Form onSubmit={this.create}>
                     <ModalHeader toggle={this.closeCreateModal}>
                         Create Reminder
-                </ModalHeader>
+                    </ModalHeader>
                     <ModalBody>
                         {this.renderCreateMessage()}
                         <ReminderForm setFirstInput={this.setFormFirstInput} />
@@ -146,13 +146,13 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         {this.renderCreateMessage()}
                         <Button onClick={this.closeCreateModal}>
                             Cancel
-                    </Button>
+                        </Button>
                         <Button
                             type="submit"
                             disabled={!this.props.formValid}
                         >
                             Create
-                    </Button>
+                        </Button>
                     </ModalFooter>
                 </Form>
             </Modal>
@@ -188,7 +188,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 <Form onSubmit={this.update}>
                     <ModalHeader toggle={this.closeUpdateModal}>
                         Update Reminder
-                </ModalHeader>
+                    </ModalHeader>
                     <ModalBody>
                         {this.renderUpdateMessage()}
                         <ReminderForm setFirstInput={this.setFormFirstInput} />
@@ -197,13 +197,13 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         {this.renderUpdateMessage()}
                         <Button onClick={this.closeUpdateModal}>
                             Cancel
-                    </Button>
+                        </Button>
                         <Button
                             type="submit"
                             disabled={!this.props.formValid}
                         >
                             Update
-                    </Button>
+                        </Button>
                     </ModalFooter>
                 </Form>
             </Modal>
@@ -229,7 +229,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 <Form onSubmit={this.delete}>
                     <ModalHeader toggle={this.closeDeleteModal}>
                         About to delete a Reminder
-                </ModalHeader>
+                    </ModalHeader>
                     <ModalBody>
                         <p>
                             {`Are you sure you want to delete the reminder "${this.props.reminder.title}"?`}
@@ -241,10 +241,10 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                             onClick={this.closeDeleteModal}
                         >
                             No
-                    </Button>
+                        </Button>
                         <Button type="submit">
                             Yes
-                    </Button>
+                        </Button>
                     </ModalFooter>
                 </Form>
             </Modal>
