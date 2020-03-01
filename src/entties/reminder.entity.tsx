@@ -1,13 +1,13 @@
 export interface IReminder {
+    id?: string;
     title?: string;
     description?: string;
-    from?: Date;
-    to?: Date;
     fromDateStr?: string;
     toDateStr?: string;
     fromTimeStr?: string;
     toTimeStr?: string;
     city?: string;
+    weather?: string;
     color?: string;
-    recurrent?: boolean;
+    recurrentForAYear?: boolean;
 }

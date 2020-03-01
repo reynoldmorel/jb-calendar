@@ -2,9 +2,9 @@ import { ActionTypes } from "./action-types.redux";
 import { IReminder } from "../../entties/reminder.entity";
 
 type ReminderValidationFlagActions = ActionTypes.SET_REMINDER_CREATED_FLAG |
-    ActionTypes.SET_REMINDER_UPDATED_FLAG | ActionTypes.SET_REMINDER_DELETED_FLAG |
-    ActionTypes.SET_REMINDER_TITLE_VALIDATION_FLAG | ActionTypes.SET_REMINDER_DATE_TIME_VALIDATION_FLAG |
-    ActionTypes.SET_REMINDER_DATE_TIME_OVERLAP_VALIDATION_FLAG | ActionTypes.SET_REMINDER_CITY_VALIDATION_FLAG;
+    ActionTypes.SET_REMINDER_UPDATED_FLAG | ActionTypes.SET_REMINDER_DELETED_FLAG;
+
+type ReminderGroup = { [key: string]: IReminder[] };
 
 export interface ISetReminderAction {
     type: ActionTypes.SET_REMINDER;
@@ -19,6 +19,16 @@ export interface ISetRemindersAction {
 export interface ISetRemindersForDateAction {
     type: ActionTypes.SET_REMINDERS_FOR_DATE;
     payload: IReminder[];
+}
+
+export interface ISetRemindersForDateYearAndMonthAction {
+    type: ActionTypes.SET_REMINDERS_FOR_DATE_YEAR_AND_MONTH;
+    payload: IReminder[];
+}
+
+export interface ISetRemindersGroupedByDateAction {
+    type: ActionTypes.SET_REMINDERS_GROUPED_BY_DATE;
+    payload: ReminderGroup;
 }
 
 export interface ISetValidationFlagAction {
@@ -51,6 +61,20 @@ export const setRemindersForDate = (remindersForDate: IReminder[]): ISetReminder
     }
 );
 
+export const setRemindersForDateYearAndMonth = (remindersForDateYearAndMonth: IReminder[]): ISetRemindersForDateYearAndMonthAction => (
+    {
+        type: ActionTypes.SET_REMINDERS_FOR_DATE_YEAR_AND_MONTH,
+        payload: remindersForDateYearAndMonth
+    }
+);
+
+export const setRemindersGroupedByDate = (remindersGroupedByDate: ReminderGroup): ISetRemindersGroupedByDateAction => (
+    {
+        type: ActionTypes.SET_REMINDERS_GROUPED_BY_DATE,
+        payload: remindersGroupedByDate
+    }
+);
+
 export const setReminderCreatedFlag = (createdSuccessful: boolean): ISetValidationFlagAction => (
     {
         type: ActionTypes.SET_REMINDER_CREATED_FLAG,
@@ -69,34 +93,6 @@ export const setReminderDeletedFlag = (deletedSuccessful: boolean): ISetValidati
     {
         type: ActionTypes.SET_REMINDER_DELETED_FLAG,
         payload: deletedSuccessful
-    }
-);
-
-export const setReminderTitleValidationFlag = (titleValidationSuccessful: boolean): ISetValidationFlagAction => (
-    {
-        type: ActionTypes.SET_REMINDER_DATE_TIME_VALIDATION_FLAG,
-        payload: titleValidationSuccessful
-    }
-);
-
-export const setReminderDateTimeValidationFlag = (dateTimeValidationSuccessful: boolean): ISetValidationFlagAction => (
-    {
-        type: ActionTypes.SET_REMINDER_DATE_TIME_VALIDATION_FLAG,
-        payload: dateTimeValidationSuccessful
-    }
-);
-
-export const setReminderDateTimeOverlapValidationFlag = (dateTimeOverlapValidationSuccessful: boolean): ISetValidationFlagAction => (
-    {
-        type: ActionTypes.SET_REMINDER_DATE_TIME_OVERLAP_VALIDATION_FLAG,
-        payload: dateTimeOverlapValidationSuccessful
-    }
-);
-
-export const setReminderCityValidationFlag = (cityValidationSuccessful: boolean): ISetValidationFlagAction => (
-    {
-        type: ActionTypes.SET_REMINDER_CITY_VALIDATION_FLAG,
-        payload: cityValidationSuccessful
     }
 );
 

@@ -1,16 +1,16 @@
 import { IReminder } from "../../entties/reminder.entity";
 
+type ReminderGroup = { [key: string]: IReminder[] };
+
 export interface IReminderStore {
     reminder: IReminder;
     reminders: IReminder[];
     remindersForDate: IReminder[];
+    remindersForDateYearAndMonth: IReminder[];
+    remindersGroupedByDate: ReminderGroup;
     createdSuccessful?: boolean;
     updatedSuccessful?: boolean;
     deletedSuccessful?: boolean;
-    titleValidationSuccessful?: boolean;
-    dateTimeValidationSuccessful?: boolean;
-    dateTimeOverlapValidationSuccessful?: boolean;
-    cityValidationSuccessful?: boolean;
 }
 
 export const ReminderStoreInitialState: IReminderStore = {
@@ -22,5 +22,7 @@ export const ReminderStoreInitialState: IReminderStore = {
         color: ""
     },
     reminders: [],
-    remindersForDate: []
+    remindersForDate: [],
+    remindersForDateYearAndMonth: [],
+    remindersGroupedByDate: {}
 };
