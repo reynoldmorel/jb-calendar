@@ -1,9 +1,9 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 
-import { IReminderPageProps, MapStateToProps, MapDispatchToProps } from "./page-props";
+import { IReminderFormProps, MapStateToProps, MapDispatchToProps } from "./form-props";
 
-class ReminderPage extends PureComponent<IReminderPageProps> {
+class ReminderForm extends PureComponent<IReminderFormProps> {
 
     render() {
         return (
@@ -13,10 +13,10 @@ class ReminderPage extends PureComponent<IReminderPageProps> {
         );
     }
 
-    
+
 }
 
 export default connect(
     MapStateToProps,
     MapDispatchToProps
-)(ReminderPage);
+)(ReminderForm);

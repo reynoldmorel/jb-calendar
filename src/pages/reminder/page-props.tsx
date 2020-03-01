@@ -3,14 +3,7 @@ import { Action } from "redux";
 import { RouteComponentProps } from "react-router-dom";
 
 import { IReminderStore } from "../../redux/reminder/store.redux";
-import {
-    validateForm,
-    validateTitle,
-    validateDescription,
-    validateDateTime,
-    validateDateTimeOverlap,
-    validateRecurrenceForAYear
-} from "./page-validations";
+import { validateForm } from "./form/form-validations";
 import { IReminder } from "../../entties/reminder.entity";
 import { ReminderService } from "../../services/reminder.service";
 
@@ -27,12 +20,8 @@ export interface IReminderPageProps extends RouteComponentProps<{}> {
     updatedSuccessful?: boolean;
     deletedSuccessful?: boolean;
     formValid?: boolean;
-    titleValid?: boolean;
-    descriptionValid?: boolean;
-    dateTimeValid?: boolean;
-    dateTimeOverlapValid?: boolean;
-    recurrenceForAYearValid?: boolean;
     setReminder: (reminder: IReminder) => void;
+    resetReminderFlags: () => void;
     getAllRemindersByDate: (date: Date, remindersGroupedByDate: ReminderGroup) => void;
     getAllRemindersByYearAndMonthWithWeather: (date: Date, remindersGroupedByDate: ReminderGroup) => void;
     create: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => void;
@@ -43,17 +32,13 @@ export interface IReminderPageProps extends RouteComponentProps<{}> {
 export const MapStateToProps = ({ reminderStore }: Store) => (
     {
         ...reminderStore,
-        formValid: validateForm(reminderStore),
-        titleValid: validateTitle(reminderStore),
-        descriptionValid: validateDescription(reminderStore),
-        dateTimeValid: validateDateTime(reminderStore),
-        dateTimeOverlapValid: validateDateTimeOverlap(reminderStore),
-        recurrenceForAYearValid: validateRecurrenceForAYear(reminderStore)
+        formValid: validateForm(reminderStore)
     }
 );
 
 export const MapDispatchToProps = (dispatch: ThunkDispatch<IReminderStore, void, Action>) => ({
     setReminder: (reminder: IReminder) => dispatch(ReminderService.setReminder(reminder)),
+    resetReminderFlags: () => dispatch(ReminderService.resetReminderFlags()),
     getAllRemindersByDate: (date: Date, remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.getAllRemindersByDate(date, remindersGroupedByDate)),
     getAllRemindersByYearAndMonthWithWeather: (date: Date, remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.getAllRemindersByYearAndMonthWithWeather(date, remindersGroupedByDate)),
     create: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.create(reminder, reminders, remindersGroupedByDate)),

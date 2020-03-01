@@ -4,7 +4,7 @@ import moment from "moment";
 import { IReminder } from "../entties/reminder.entity";
 import {
     setReminder, setReminders, setRemindersForDate,
-    setRemindersForDateYearAndMonth, setRemindersGroupedByDate
+    setRemindersForDateYearAndMonth, setRemindersGroupedByDate, resetReminderFlags
 } from "../redux/reminder/actions.redux";
 import { DateUtil } from "../utils/date.util";
 import { WeatherService } from "./weather.service";
@@ -17,6 +17,12 @@ export class ReminderService {
     static setReminder(reminder: IReminder) {
         return (dispatch: Dispatch) => {
             dispatch(setReminder(reminder));
+        }
+    }
+
+    static resetReminderFlags() {
+        return (dispatch: Dispatch) => {
+            dispatch(resetReminderFlags());
         }
     }
 

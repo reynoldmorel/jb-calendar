@@ -1,5 +1,5 @@
-import { IReminderStore } from "../../redux/reminder/store.redux";
-import { DateUtil } from "../../utils/date.util";
+import { IReminderStore } from "../../../redux/reminder/store.redux";
+import { DateUtil } from "../../../utils/date.util";
 import moment from "moment";
 
 export const validateForm = (reminderStore: IReminderStore): boolean =>
