@@ -5,18 +5,24 @@ export class DateUtil {
 
     static generateReminderDateKeys(reminder: IReminder): string[] {
         let { fromAsDate, toAsDate } = DateUtil.getReminderFromAndToAsDate(reminder);
-        const { recurrentForAYear } = reminder;
+        const { recurrenceForAYear } = reminder;
 
-        if (recurrentForAYear) {
+        if (recurrenceForAYear) {
             let result: string[] = [];
-            let currentYear = fromAsDate.getFullYear();
-            const nextYear = currentYear + 1;
+            const currentMonth = fromAsDate.getMonth();
+            const currentYear = fromAsDate.getFullYear();
 
-            while (currentYear < nextYear) {
-                result = result.concat(DateUtil.generateDateKeysFromDateRange(fromAsDate, toAsDate));
-                fromAsDate = moment(fromAsDate).add(1, 'months').toDate();
-                toAsDate = moment(toAsDate).add(1, 'months').toDate();
-                currentYear = fromAsDate.getFullYear();
+            for (let month = currentMonth; month < 12; month++) {
+                const fromDate = moment([currentYear, month, fromAsDate.getDate()]);
+                const toDate = moment([currentYear, month, toAsDate.getDate()]);
+
+                if (fromDate.get("months") === month) {
+                    if (toDate.get("months") === month) {
+                        result = result.concat(DateUtil.generateDateKeysFromDateRange(fromDate.toDate(), toDate.toDate()));
+                    } else {
+                        result = result.concat(DateUtil.generateDateKeysFromDateRange(fromDate.toDate(), fromDate.endOf("month").toDate()));
+                    }
+                }
             }
 
             return result;
@@ -26,27 +32,34 @@ export class DateUtil {
     }
 
     static generateDateKeysFromDateRange(from: Date, to: Date): string[] {
-        let result: string[] = [];
+        let result: { [keys: string]: string } = {};
         let date = moment(from);
-        let totalDays = moment(to).diff(from, 'days');
+        let totalDays = moment(to).diff(from, "days");
 
-        for (let i = 0; i < totalDays; i++) {
+        for (let i = 0; i <= totalDays; i++) {
             const dateKey = date.format(process.env.REACT_APP_DATE_FORMAT);
             const dateKeyParts = dateKey.split("-");
             const dateYearMonthKey = `${dateKeyParts[0]}-${dateKeyParts[1]}`;
-            result = [dateKey, dateYearMonthKey].concat(result);
-            date = date.add(1, 'days');
+            result = { ...result, [dateKey]: dateKey, [dateYearMonthKey]: dateYearMonthKey };
+            date = date.add(1, "days")
         }
 
-        return result;
+        return Object.keys(result);
     }
 
     static reminderDateRangeInReminderFilter(reminderToCheck: IReminder): (reminder: IReminder) => boolean {
-        const { fromInMillis, toInMillis } = DateUtil.getReminderFromAndToAsMillis(reminderToCheck);
+        const dateObjectInMillis = DateUtil.getReminderFromAndToAsMillis(reminderToCheck);
+        const fromInMillisToCheck = dateObjectInMillis.fromInMillis;
+        const toInMillisToCheck = dateObjectInMillis.toInMillis;
+
         return (reminder: IReminder) => {
-            return reminder.id !== reminderToCheck.id
-                && DateUtil.dateInReminder(fromInMillis, reminder)
-                && DateUtil.dateInReminder(toInMillis, reminder)
+            const { fromInMillis, toInMillis } = DateUtil.getReminderFromAndToAsMillis(reminder);
+
+            return reminder.id === reminderToCheck.id
+                || DateUtil.dateInReminder(fromInMillisToCheck, reminder)
+                || DateUtil.dateInReminder(toInMillisToCheck, reminder)
+                || DateUtil.dateInReminder(fromInMillis, reminderToCheck)
+                || DateUtil.dateInReminder(toInMillis, reminderToCheck)
         };
     }
 
@@ -80,7 +93,7 @@ export class DateUtil {
 
     static getReminderFromAndToAsDate(reminder: IReminder) {
         const { fromDateStr, toDateStr, fromTimeStr, toTimeStr } = reminder;
-        const dateTimeFormat = `${process.env.REACT_APP_INPUT_DATE_FORMAT} ${process.env.REACT_APP_INPUT_TIME_FORMAT}`;
+        const dateTimeFormat = `${process.env.REACT_APP_DATE_FORMAT} ${process.env.REACT_APP_TIME_FORMAT}`;
 
         const fromAsDate = moment(`${fromDateStr} ${fromTimeStr}`, dateTimeFormat)
             .toDate();

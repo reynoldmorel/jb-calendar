@@ -49,7 +49,8 @@ export class ReminderService {
             const dateKeys = DateUtil.generateReminderDateKeys(reminder);
 
             if (dateKeys.length > 0) {
-                reminder = { ...reminder, dateKeys: dateKeys };
+                const id = new Date().getTime();
+                reminder = { ...reminder, id, dateKeys };
 
                 const newReminders = [reminder].concat(reminders);
                 const newRemindersGroupedByDate = ReminderService.groupReminder(reminder, remindersGroupedByDate);
@@ -57,8 +58,9 @@ export class ReminderService {
                 dispatch(setReminderCreatedFlag(true));
                 dispatch(setReminders(newReminders));
                 dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+            } else {
+                dispatch(setReminderCreatedFlag(false));
             }
-            dispatch(setReminderCreatedFlag(false));
         }
     }
 
@@ -73,15 +75,16 @@ export class ReminderService {
                 newReminders = reminders.filter(r => r.id !== reminder.id);
                 newRemindersGroupedByDate = ReminderService.removeGroupReminder(oldReminder, remindersGroupedByDate);
 
-                reminder = { ...reminder, dateKeys: dateKeys };
+                reminder = { ...reminder, dateKeys };
                 newReminders = [reminder].concat(newReminders);
                 newRemindersGroupedByDate = ReminderService.groupReminder(reminder, remindersGroupedByDate);
 
                 dispatch(setReminderUpdatedFlag(true));
                 dispatch(setReminders(newReminders));
                 dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+            } else {
+                dispatch(setReminderUpdatedFlag(false));
             }
-            dispatch(setReminderUpdatedFlag(false));
         }
     }
 
@@ -99,10 +102,12 @@ export class ReminderService {
                     dispatch(setReminderDeletedFlag(true));
                     dispatch(setReminders(newReminders));
                     dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
+                } else {
+                    dispatch(setReminderDeletedFlag(false));
                 }
+            } else {
+                dispatch(setReminderDeletedFlag(false));
             }
-
-            dispatch(setReminderDeletedFlag(false));
         }
     }
 

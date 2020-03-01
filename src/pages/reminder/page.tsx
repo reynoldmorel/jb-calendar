@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, MouseEvent } from "react";
 import { connect } from "react-redux";
 import { Alert, Button, Form, Modal, ModalHeader, ModalBody, ModalFooter, Row, Col } from "reactstrap";
 
@@ -10,15 +10,17 @@ import { IReminder } from "../../entties";
 
 class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState> {
 
+    private formFirstInput?: HTMLInputElement;
+
     constructor(props: IReminderPageProps) {
         super(props);
 
         this.state = ReminderPageInitialState;
     }
 
-    componentDidUpdate() {
-        if (this.props.createdSuccessful) {
-            this.closeCreateModal();
+    componentDidUpdate(prevProps: IReminderPageProps) {
+        if (this.props.createdSuccessful && this.props.reminder === prevProps.reminder) {
+            this.resetCreateModalAfterCreationSuccessFul();
         } else if (this.props.updatedSuccessful) {
             this.closeUpdateModal();
         } else if (this.props.deletedSuccessful) {
@@ -26,19 +28,29 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         }
     }
 
+    resetCreateModalAfterCreationSuccessFul = () => {
+        this.clearReminder();
+        this.focusFirstElementOnForm();
+
+        setTimeout(this.props.resetReminderFlags, 2000);
+    }
+
     openCreateModal = () => {
         this.setState({ showCreateModal: true });
-        this.props.setReminder(ReminderStoreInitialState.reminder);
+        this.clearReminder();
     }
 
     closeCreateModal = () => {
         this.setState({ showCreateModal: false });
-        this.props.setReminder(ReminderStoreInitialState.reminder);
+        this.clearReminder();
         this.props.resetReminderFlags();
     }
 
-    create = () => {
+    create = (e: MouseEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
         const { reminder, reminders, remindersGroupedByDate, formValid } = this.props;
+
         if (formValid && reminder) {
             this.props.create(reminder, reminders, remindersGroupedByDate);
         }
@@ -51,12 +63,15 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
 
     closeUpdateModal = () => {
         this.setState({ showUpdateModal: false });
-        this.props.setReminder(ReminderStoreInitialState.reminder);
+        this.clearReminder();
         this.props.resetReminderFlags();
     }
 
-    update = () => {
+    update = (e: MouseEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
         const { reminder, reminders, remindersGroupedByDate, formValid } = this.props;
+
         if (formValid && reminder) {
             this.props.update(reminder, reminders, remindersGroupedByDate);
         }
@@ -64,7 +79,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
 
     openDeleteModal = (reminder: IReminder) => {
         this.setState({ showDeleteModal: true });
-        this.props.setReminder(reminder);
+        this.clearReminder();
     }
 
     closeDeleteModal = () => {
@@ -73,12 +88,28 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         this.props.resetReminderFlags();
     }
 
-    delete = () => {
+    delete = (e: MouseEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
         const { reminder, reminders, remindersGroupedByDate } = this.props;
 
         if (reminder && reminder.id !== undefined) {
             this.props.deleteById(reminders, remindersGroupedByDate, reminder.id);
         }
+    }
+
+    clearReminder = () => {
+        this.props.setReminder({ ...ReminderStoreInitialState.reminder });
+    }
+
+    focusFirstElementOnForm = () => {
+        if (this.formFirstInput) {
+            this.formFirstInput.focus();
+        }
+    }
+
+    setFormFirstInput = (input: HTMLInputElement) => {
+        this.formFirstInput = input;
     }
 
     render() {
@@ -97,69 +128,93 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
 
     renderCreateModal = () => {
         return (
+
             <Modal
+                onOpened={this.focusFirstElementOnForm}
                 isOpen={this.state.showCreateModal}
                 toggle={this.closeCreateModal}
             >
-                <ModalHeader toggle={this.closeCreateModal}>
-                    Create Reminder
+                <Form onSubmit={this.create}>
+                    <ModalHeader toggle={this.closeCreateModal}>
+                        Create Reminder
                 </ModalHeader>
-                <ModalBody>
-                    <ReminderForm />
-                </ModalBody>
-                <ModalFooter>
-                    {this.renderCreateErrorMessage}
-                    <Button onClick={this.closeCreateModal}>
-                        Cancel
+                    <ModalBody>
+                        {this.renderCreateMessage()}
+                        <ReminderForm setFirstInput={this.setFormFirstInput} />
+                    </ModalBody>
+                    <ModalFooter>
+                        {this.renderCreateMessage()}
+                        <Button onClick={this.closeCreateModal}>
+                            Cancel
                     </Button>
-                    <Button onClick={this.create}>
-                        Create
+                        <Button
+                            type="submit"
+                            disabled={!this.props.formValid}
+                        >
+                            Create
                     </Button>
-                </ModalFooter>
+                    </ModalFooter>
+                </Form>
             </Modal>
         );
     }
 
-    renderCreateErrorMessage = () => {
-        return this.props.createdSuccessful === false
-            ? (
-                <Alert color="danger">
-                    There was a problem trying to create "{this.props.reminder.title}".
+    renderCreateMessage = () => {
+        if (this.props.createdSuccessful === true) {
+            return (
+                <Alert id="amCreateSuceeded" color="success">
+                    {`Reminder created successfully.`}
                 </Alert>
-            )
-            : (<div />);
+            );
+        } else if (this.props.createdSuccessful === false) {
+            return (
+                <Alert id="amCreateFailed" color="danger">
+                    {`There was a problem trying to create "${this.props.reminder.title}".`}
+                </Alert>
+            );
+        } else {
+            return (<div />);
+        }
     }
 
     renderUpdateModal = () => {
         return (
+
             <Modal
+                onOpened={this.focusFirstElementOnForm}
                 isOpen={this.state.showUpdateModal}
                 toggle={this.closeUpdateModal}
             >
-                <ModalHeader toggle={this.closeUpdateModal}>
-                    Update Reminder
+                <Form onSubmit={this.update}>
+                    <ModalHeader toggle={this.closeUpdateModal}>
+                        Update Reminder
                 </ModalHeader>
-                <ModalBody>
-                    <ReminderForm />
-                </ModalBody>
-                <ModalFooter>
-                    {this.renderUpdateErrorMessage}
-                    <Button onClick={this.closeUpdateModal}>
-                        Cancel
+                    <ModalBody>
+                        {this.renderUpdateMessage()}
+                        <ReminderForm setFirstInput={this.setFormFirstInput} />
+                    </ModalBody>
+                    <ModalFooter>
+                        {this.renderUpdateMessage()}
+                        <Button onClick={this.closeUpdateModal}>
+                            Cancel
                     </Button>
-                    <Button onClick={this.update}>
-                        Update
+                        <Button
+                            type="submit"
+                            disabled={!this.props.formValid}
+                        >
+                            Update
                     </Button>
-                </ModalFooter>
+                    </ModalFooter>
+                </Form>
             </Modal>
         );
     }
 
-    renderUpdateErrorMessage = () => {
+    renderUpdateMessage = () => {
         return this.props.updatedSuccessful === false
             ? (
-                <Alert color="danger">
-                    There was a problem trying to update "{this.props.reminder.title}".
+                <Alert id="amUpdateFailed" color="danger">
+                    {`There was a problem trying to update "${this.props.reminder.title}".`}
                 </Alert>
             )
             : (<div />);
@@ -171,32 +226,36 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 isOpen={this.state.showDeleteModal}
                 toggle={this.closeDeleteModal}
             >
-                <ModalHeader toggle={this.closeDeleteModal}>
-                    About to delete a Reminder
+                <Form onSubmit={this.delete}>
+                    <ModalHeader toggle={this.closeDeleteModal}>
+                        About to delete a Reminder
                 </ModalHeader>
-                <ModalBody>
-                    <p>
-                        Are you sure you want to delete the reminder "{this.props.reminder.title}"?
-                    </p>
-                </ModalBody>
-                <ModalFooter>
-                    {this.renderDeleteErrorMessage}
-                    <Button onClick={this.closeDeleteModal}>
-                        No
+                    <ModalBody>
+                        <p>
+                            {`Are you sure you want to delete the reminder "${this.props.reminder.title}"?`}
+                        </p>
+                    </ModalBody>
+                    <ModalFooter>
+                        {this.renderDeleteMessage()}
+                        <Button
+                            onClick={this.closeDeleteModal}
+                        >
+                            No
                     </Button>
-                    <Button onClick={this.delete}>
-                        Yes
+                        <Button type="submit">
+                            Yes
                     </Button>
-                </ModalFooter>
+                    </ModalFooter>
+                </Form>
             </Modal>
         );
     }
 
-    renderDeleteErrorMessage = () => {
+    renderDeleteMessage = () => {
         return this.props.deletedSuccessful === false
             ? (
-                <Alert color="danger">
-                    There was a problem trying to delete "{this.props.reminder.title}".
+                <Alert id="amDeleteFailed" color="danger">
+                    {`There was a problem trying to delete "${this.props.reminder.title}".`}
                 </Alert>
             )
             : (<div />);

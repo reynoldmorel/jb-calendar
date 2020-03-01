@@ -3,7 +3,7 @@ import { DateUtil } from "../../../utils/date.util";
 import moment from "moment";
 
 export const validateForm = (reminderStore: IReminderStore): boolean =>
-    validateTitle(reminderStore) && validateDescription(reminderStore)
+    validateTitle(reminderStore) && validateDescription(reminderStore) && validateCity(reminderStore)
     && validateDateTime(reminderStore) && validateDateTimeOverlap(reminderStore)
     && validateRecurrenceForAYear(reminderStore);
 
@@ -18,6 +18,12 @@ export const validateDescription = (reminderStore: IReminderStore): boolean => {
     const { reminder } = reminderStore;
     return !reminder.description
         || reminder.description.length <= Number(process.env.REACT_APP_REMINDER_DESCRIPTION_MAX_LENGTH);
+}
+
+export const validateCity = (reminderStore: IReminderStore): boolean => {
+    const { reminder } = reminderStore;
+    return !reminder.city
+        || reminder.city.length <= Number(process.env.REACT_APP_REMINDER_CITY_MAX_LENGTH);
 }
 
 export const validateDateTime = (reminderStore: IReminderStore): boolean => {
@@ -39,9 +45,10 @@ export const validateDateTimeOverlap = (reminderStore: IReminderStore): boolean 
 export const validateRecurrenceForAYear = (reminderStore: IReminderStore): boolean => {
     const { reminder } = reminderStore;
 
-    if (reminder.recurrentForAYear) {
+    if (reminder.recurrenceForAYear) {
         const { fromAsDate, toAsDate } = DateUtil.getReminderFromAndToAsDate(reminder);
-        return moment(toAsDate).diff(fromAsDate, "months") === 0;
+        const monsthsDiff = moment(toAsDate).diff(fromAsDate, "months");
+        return monsthsDiff === 0;
     }
 
     return true;

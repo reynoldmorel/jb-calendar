@@ -7,7 +7,8 @@ import {
     validateDescription,
     validateDateTime,
     validateDateTimeOverlap,
-    validateRecurrenceForAYear
+    validateRecurrenceForAYear,
+    validateCity
 } from "./form-validations";
 import { IReminder } from "../../../entties/reminder.entity";
 import { ReminderService } from "../../../services/reminder.service";
@@ -18,10 +19,12 @@ export interface IReminderFormProps {
     reminder: IReminder;
     titleValid?: boolean;
     descriptionValid?: boolean;
+    cityValid?: boolean;
     dateTimeValid?: boolean;
     dateTimeOverlapValid?: boolean;
     recurrenceForAYearValid?: boolean;
     setReminder: (reminder: IReminder) => void;
+    setFirstInput?: (input: HTMLInputElement) => void;
 }
 
 export const MapStateToProps = ({ reminderStore }: Store) => (
@@ -29,6 +32,7 @@ export const MapStateToProps = ({ reminderStore }: Store) => (
         ...reminderStore,
         titleValid: validateTitle(reminderStore),
         descriptionValid: validateDescription(reminderStore),
+        cityValid: validateCity(reminderStore),
         dateTimeValid: validateDateTime(reminderStore),
         dateTimeOverlapValid: validateDateTimeOverlap(reminderStore),
         recurrenceForAYearValid: validateRecurrenceForAYear(reminderStore)

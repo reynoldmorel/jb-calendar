@@ -10,5 +10,5 @@ export interface IReminder {
     city?: string;
     weather?: string;
     color?: string;
-    recurrentForAYear?: boolean;
+    recurrenceForAYear?: boolean;
 }
