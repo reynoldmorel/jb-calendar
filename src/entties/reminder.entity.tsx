@@ -6,6 +6,7 @@ export interface IReminder {
     toDateStr?: string;
     fromTimeStr?: string;
     toTimeStr?: string;
+    dateKeys?: string[];
     city?: string;
     weather?: string;
     color?: string;

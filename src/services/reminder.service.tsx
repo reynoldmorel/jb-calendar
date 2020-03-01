@@ -49,8 +49,10 @@ export class ReminderService {
             const dateKeys = DateUtil.generateReminderDateKeys(reminder);
 
             if (dateKeys.length > 0) {
+                reminder = { ...reminder, dateKeys: dateKeys };
+
                 const newReminders = [reminder].concat(reminders);
-                const newRemindersGroupedByDate = ReminderService.groupReminder(reminder, dateKeys, remindersGroupedByDate);
+                const newRemindersGroupedByDate = ReminderService.groupReminder(reminder, remindersGroupedByDate);
 
                 dispatch(setReminderCreatedFlag(true));
                 dispatch(setReminders(newReminders));
@@ -67,13 +69,13 @@ export class ReminderService {
             let newReminders: IReminder[] = Object.assign([], reminders);
             let newRemindersGroupedByDate: ReminderGroup = Object.assign({}, remindersGroupedByDate);
 
-            if (oldReminder && dateKeys.length > 0) {
+            if (oldReminder && oldReminder.dateKeys && dateKeys.length > 0) {
                 newReminders = reminders.filter(r => r.id !== reminder.id);
-                const oldDateKeys = DateUtil.generateReminderDateKeys(oldReminder);
-                newRemindersGroupedByDate = ReminderService.removeGroupReminder(reminder, oldDateKeys, remindersGroupedByDate);
+                newRemindersGroupedByDate = ReminderService.removeGroupReminder(oldReminder, remindersGroupedByDate);
 
+                reminder = { ...reminder, dateKeys: dateKeys };
                 newReminders = [reminder].concat(newReminders);
-                newRemindersGroupedByDate = ReminderService.groupReminder(reminder, dateKeys, remindersGroupedByDate);
+                newRemindersGroupedByDate = ReminderService.groupReminder(reminder, remindersGroupedByDate);
 
                 dispatch(setReminderUpdatedFlag(true));
                 dispatch(setReminders(newReminders));
@@ -92,7 +94,7 @@ export class ReminderService {
 
                 if (dateKeys.length > 0) {
                     const newReminders = reminders.filter(r => r.id !== id);
-                    const newRemindersGroupedByDate = ReminderService.removeGroupReminder(reminder, dateKeys, remindersGroupedByDate);
+                    const newRemindersGroupedByDate = ReminderService.removeGroupReminder(reminder, remindersGroupedByDate);
 
                     dispatch(setReminderDeletedFlag(true));
                     dispatch(setReminders(newReminders));
@@ -128,10 +130,12 @@ export class ReminderService {
         return result;
     }
 
-    private static groupReminder(reminder: IReminder, dateKeys: string[], remindersGroupedByDate: ReminderGroup) {
-        for (let i = 0; i < dateKeys.length; i++) {
-            const dateKey = dateKeys[i];
-            remindersGroupedByDate = ReminderService.putReminder(reminder, dateKey, remindersGroupedByDate);
+    private static groupReminder(reminder: IReminder, remindersGroupedByDate: ReminderGroup) {
+        if (reminder.dateKeys) {
+            for (let i = 0; i < reminder.dateKeys.length; i++) {
+                const dateKey = reminder.dateKeys[i];
+                remindersGroupedByDate = ReminderService.putReminder(reminder, dateKey, remindersGroupedByDate);
+            }
         }
 
         return remindersGroupedByDate;
@@ -144,10 +148,12 @@ export class ReminderService {
         };
     }
 
-    private static removeGroupReminder(reminder: IReminder, dateKeys: string[], remindersGroupedByDate: ReminderGroup) {
-        for (let i = 0; i < dateKeys.length; i++) {
-            const dateKey = dateKeys[i];
-            remindersGroupedByDate = ReminderService.removeReminder(reminder, dateKey, remindersGroupedByDate);
+    private static removeGroupReminder(reminder: IReminder, remindersGroupedByDate: ReminderGroup) {
+        if (reminder.dateKeys) {
+            for (let i = 0; i < reminder.dateKeys.length; i++) {
+                const dateKey = reminder.dateKeys[i];
+                remindersGroupedByDate = ReminderService.removeReminder(reminder, dateKey, remindersGroupedByDate);
+            }
         }
 
         return remindersGroupedByDate;
