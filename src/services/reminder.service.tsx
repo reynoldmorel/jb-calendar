@@ -1,15 +1,13 @@
 import { Dispatch } from "redux";
 import moment from "moment";
 
-import { IReminder } from "../entties/reminder.entity";
+import { IReminder, ReminderGroup } from "../entties/reminder.entity";
 import {
     setReminder, setReminders, setRemindersForDate,
     setRemindersForDateYearAndMonth, setRemindersGroupedByDate, resetReminderFlags,
     setReminderCreatedFlag, setReminderUpdatedFlag, setReminderDeletedFlag
 } from "../redux/reminder/actions.redux";
 import { ReminderUtil } from "../utils/reminder.util";
-
-type ReminderGroup = { [key: string]: IReminder[] };
 
 export class ReminderService {
 

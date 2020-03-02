@@ -1,7 +1,5 @@
-import { IReminder } from "../../entties/reminder.entity";
+import { IReminder, ReminderGroup } from "../../entties/reminder.entity";
 import moment from "moment";
-
-type ReminderGroup = { [key: string]: IReminder[] };
 
 export interface IReminderStore {
     reminder: IReminder;
@@ -31,3 +29,5 @@ export const ReminderStoreInitialState: IReminderStore = {
     remindersForDateYearAndMonth: [],
     remindersGroupedByDate: {}
 };
+
+export type Store = { reminderStore: IReminderStore };

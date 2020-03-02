@@ -1,7 +1,5 @@
-import { ICalendarItem } from "../components/calendar";
+import { ICalendarItem, CalendarItemGroup } from "../components/calendar";
 import { DateUtil } from "./date.util";
-
-type CalendarItemGroup = { [key: string]: ICalendarItem[] };
 
 export class CalendarUtil {
     static generateCalendarItemDateKeys(calendarItem: ICalendarItem, dateTimeFormat: string): string[] {

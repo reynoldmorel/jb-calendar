@@ -1,10 +1,8 @@
 import { ActionTypes } from "./action-types.redux";
-import { IReminder } from "../../entties/reminder.entity";
+import { IReminder, ReminderGroup } from "../../entties/reminder.entity";
 
 type ReminderValidationFlagActions = ActionTypes.SET_REMINDER_CREATED_FLAG |
     ActionTypes.SET_REMINDER_UPDATED_FLAG | ActionTypes.SET_REMINDER_DELETED_FLAG;
-
-type ReminderGroup = { [key: string]: IReminder[] };
 
 export interface ISetReminderAction {
     type: ActionTypes.SET_REMINDER;

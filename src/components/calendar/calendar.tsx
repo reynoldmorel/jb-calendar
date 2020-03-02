@@ -7,11 +7,9 @@ import moment from "moment";
 import "./calendar.css";
 
 import { ICalendarProps, CalendarDefaultProps } from "./calendar-props";
-import { ICalendarItem } from "./calendar-item";
+import { CalendarItemGroup } from "./calendar-item";
 import { CalendarUtil } from "../../utils/calendar.util";
 import { CalendarDay } from "./calendar-day";
-
-type CalendarItemGroup = { [key: string]: ICalendarItem[] };
 
 export class Calendar extends Component<ICalendarProps> {
 

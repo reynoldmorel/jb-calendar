@@ -1,9 +1,8 @@
-import { IReminder } from "../entties/reminder.entity";
+import { IReminder, ReminderGroup } from "../entties/reminder.entity";
 import { DateUtil } from "./date.util";
 import { WeatherService } from "../services/weather.service";
 import { ICalendarItem } from "../components/calendar/calendar-item";
 
-type ReminderGroup = { [key: string]: IReminder[] };
 type DeleteResult = { newReminders: IReminder[], newRemindersGroupedByDate: ReminderGroup };
 type CityWeather = { [key: string]: string }
 

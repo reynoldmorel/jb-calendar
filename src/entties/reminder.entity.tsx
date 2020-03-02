@@ -13,3 +13,5 @@ export interface IReminder {
     fontColor?: string;
     recurrenceForAYear?: boolean;
 }
+
+export type ReminderGroup = { [key: string]: IReminder[] };

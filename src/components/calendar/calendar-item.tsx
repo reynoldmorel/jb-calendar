@@ -8,3 +8,5 @@ export interface ICalendarItem {
     dateKeys?: string[];
     data: any;
 }
+
+export type CalendarItemGroup = { [key: string]: ICalendarItem[] };

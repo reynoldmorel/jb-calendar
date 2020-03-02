@@ -2,15 +2,12 @@ import { ThunkDispatch } from "redux-thunk";
 import { Action } from "redux";
 import { RouteComponentProps } from "react-router-dom";
 
-import { IReminderStore } from "../../redux/reminder/store.redux";
+import { IReminderStore, Store } from "../../redux/reminder/store.redux";
 import { validateForm } from "./form/form-validations";
-import { IReminder } from "../../entties/reminder.entity";
+import { IReminder, ReminderGroup } from "../../entties/reminder.entity";
 import { ReminderService } from "../../services/reminder.service";
 import { ICalendarItem } from "../../components/calendar";
 import { ReminderUtil } from "../../utils/reminder.util";
-
-type ReminderGroup = { [key: string]: IReminder[] };
-type Store = { reminderStore: IReminderStore };
 
 export interface IReminderPageProps extends RouteComponentProps<{}> {
     reminder: IReminder;
