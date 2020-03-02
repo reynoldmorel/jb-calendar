@@ -56,7 +56,14 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         e.preventDefault();
 
         this.setState({ showCreateModal: true });
-        this.clearReminder();
+
+        const formattedCalendarDate = moment(this.state.calendarDate).format(process.env.REACT_APP_DATE_FORMAT);
+
+        this.props.setReminder({
+            ...ReminderStoreInitialState.reminder,
+            fromDateStr: formattedCalendarDate,
+            toDateStr: formattedCalendarDate
+        });
     }
 
     closeCreateModal = () => {
