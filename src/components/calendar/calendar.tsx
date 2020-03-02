@@ -146,7 +146,6 @@ export class Calendar extends Component<ICalendarProps> {
         let momentDateToComplete = momentFirstDay.subtract(firstDay, "days");
 
         for (let i = firstDay; i > 0; i--) {
-            console.log(momentDateToComplete.toDate().toISOString())
             const calendarDay = this.buildEmptyCalendarDay(momentDateToComplete);
             daysCol = daysCol.concat([calendarDay]);
             momentDateToComplete = momentDateToComplete.add(1, "days");
@@ -164,9 +163,16 @@ export class Calendar extends Component<ICalendarProps> {
             }
         }
 
-        if (daysCol.length > 0) {
-            const row = this.buildCalendarRow(momentDate.toDate(), daysCol);
-            result = result.concat([row]);
+        for (let i = momentDate.get("day"); i < 7; i++) {
+            momentDate = momentDate.add(1, "days");
+            const calendarDay = this.buildEmptyCalendarDay(momentDate);
+            daysCol = daysCol.concat([calendarDay]);
+
+            if (daysCol.length === 7) {
+                const row = this.buildCalendarRow(momentDate.toDate(), daysCol);
+                result = result.concat([row]);
+                daysCol = [];
+            }
         }
 
         return result;
