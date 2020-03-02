@@ -13,10 +13,13 @@
         flex-direction: column;
         display: flex;
     }
+
+    .jb-calendar .disabled-day {
+        display: none;
+    }
 }
 
 @media screen and (min-width: 768px) {
-
     .jb-calendar .day-col-container,
     .jb-calendar .days-name-col-container {
         flex-direction: row;
