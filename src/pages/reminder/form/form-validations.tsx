@@ -1,6 +1,6 @@
 import { IReminderStore } from "../../../redux/reminder/store.redux";
-import { DateUtil } from "../../../utils/date.util";
 import moment from "moment";
+import { ReminderUtil } from "../../../utils/reminder.util";
 
 export const validateForm = (reminderStore: IReminderStore): boolean =>
     validateTitle(reminderStore) && validateDescription(reminderStore) && validateCity(reminderStore)
@@ -28,7 +28,7 @@ export const validateCity = (reminderStore: IReminderStore): boolean => {
 
 export const validateDateTime = (reminderStore: IReminderStore): boolean => {
     const { reminder } = reminderStore;
-    const { fromInMillis, toInMillis } = DateUtil.getReminderFromAndToAsMillis(reminder);
+    const { fromInMillis, toInMillis } = ReminderUtil.getReminderFromAndToAsMillis(reminder);
     return fromInMillis < toInMillis;
 }
 
@@ -37,7 +37,7 @@ export const validateDateTimeOverlap = (reminderStore: IReminderStore): boolean 
 
     const firstElement =
         reminders
-            .find(DateUtil.reminderDateRangeInReminderFilter(reminder));
+            .find(ReminderUtil.reminderDateRangeInReminderFilter(reminder));
 
     return !firstElement;
 }
@@ -46,7 +46,7 @@ export const validateRecurrenceForAYear = (reminderStore: IReminderStore): boole
     const { reminder } = reminderStore;
 
     if (reminder.recurrenceForAYear) {
-        const { fromAsDate, toAsDate } = DateUtil.getReminderFromAndToAsDate(reminder);
+        const { fromAsDate, toAsDate } = ReminderUtil.getReminderFromAndToAsDate(reminder);
         const monsthsDiff = moment(toAsDate).diff(fromAsDate, "months");
         return monsthsDiff === 0;
     }

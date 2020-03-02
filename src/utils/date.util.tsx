@@ -1,12 +1,7 @@
-import { IReminder } from "../entties";
 import moment from "moment";
 
 export class DateUtil {
-
-    static generateReminderDateKeys(reminder: IReminder): string[] {
-        let { fromAsDate, toAsDate } = DateUtil.getReminderFromAndToAsDate(reminder);
-        const { recurrenceForAYear } = reminder;
-
+    static generateDateKeys(fromAsDate: Date, toAsDate: Date, recurrenceForAYear: boolean = false): string[] {
         if (recurrenceForAYear) {
             let result: string[] = [];
             const currentMonth = fromAsDate.getMonth();
@@ -47,58 +42,15 @@ export class DateUtil {
         return Object.keys(result);
     }
 
-    static reminderDateRangeInReminderFilter(reminderToCheck: IReminder): (reminder: IReminder) => boolean {
-        const dateObjectInMillis = DateUtil.getReminderFromAndToAsMillis(reminderToCheck);
-        const fromInMillisToCheck = dateObjectInMillis.fromInMillis;
-        const toInMillisToCheck = dateObjectInMillis.toInMillis;
-
-        return (reminder: IReminder) => {
-            const { fromInMillis, toInMillis } = DateUtil.getReminderFromAndToAsMillis(reminder);
-
-            return reminder.id === reminderToCheck.id
-                || DateUtil.dateInReminder(fromInMillisToCheck, reminder)
-                || DateUtil.dateInReminder(toInMillisToCheck, reminder)
-                || DateUtil.dateInReminder(fromInMillis, reminderToCheck)
-                || DateUtil.dateInReminder(toInMillis, reminderToCheck)
-        };
-    }
-
-    static dateInReminder(dateInMillis?: number, reminder?: IReminder): boolean {
-        if (dateInMillis !== undefined && reminder) {
-            const { fromInMillis, toInMillis } =
-                DateUtil.getReminderFromAndToAsMillis(reminder);
-
-            return DateUtil.dateBetween(
-                dateInMillis,
-                fromInMillis,
-                toInMillis
-            )
-        }
-
-        return false;
-    }
-
     static dateBetween(dateInMillis: number, fromInMillis: number, toInMillis: number): boolean {
         return fromInMillis <= dateInMillis && toInMillis >= dateInMillis
     }
 
-    static getReminderFromAndToAsMillis(reminder: IReminder) {
-        const dateObject = DateUtil.getReminderFromAndToAsDate(reminder);
-
-        return {
-            fromInMillis: dateObject.fromAsDate.getTime(),
-            toInMillis: dateObject.toAsDate.getTime()
-        };
-    }
-
-    static getReminderFromAndToAsDate(reminder: IReminder) {
-        const { fromDateStr, toDateStr, fromTimeStr, toTimeStr } = reminder;
-        const dateTimeFormat = `${process.env.REACT_APP_DATE_FORMAT} ${process.env.REACT_APP_TIME_FORMAT}`;
-
-        const fromAsDate = moment(`${fromDateStr} ${fromTimeStr}`, dateTimeFormat)
+    static getFromAndToAsDate(fromDateTimeStr: string, toDateTimeStr: string, dateTimeFormat: string) {
+        const fromAsDate = moment(fromDateTimeStr, dateTimeFormat)
             .toDate();
 
-        const toAsDate = moment(`${toDateStr} ${toTimeStr}`, dateTimeFormat)
+        const toAsDate = moment(toDateTimeStr, dateTimeFormat)
             .toDate();
 
         return { fromAsDate, toAsDate };

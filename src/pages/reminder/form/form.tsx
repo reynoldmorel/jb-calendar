@@ -14,8 +14,12 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
         this.state = ReminderFormInitialState;
     }
 
-    toggleColorPickerModal = () => {
-        this.setState({ showColorPickerModal: !this.state.showColorPickerModal })
+    toggleBkgColorPickerModal = () => {
+        this.setState({ showBkgColorPickerModal: !this.state.showBkgColorPickerModal })
+    }
+
+    toggleFontColorPickerModal = () => {
+        this.setState({ showFontColorPickerModal: !this.state.showFontColorPickerModal })
     }
 
     handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,9 +62,14 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
         this.props.setReminder({ ...this.props.reminder, recurrenceForAYear });
     };
 
-    handleColorChange = (handler: ColorResult) => {
-        const color = handler.hex;
-        this.props.setReminder({ ...this.props.reminder, color });
+    handleBkgColorChange = (handler: ColorResult) => {
+        const bkgColor = handler.hex;
+        this.props.setReminder({ ...this.props.reminder, bkgColor });
+    };
+
+    handleFontColorChange = (handler: ColorResult) => {
+        const fontColor = handler.hex;
+        this.props.setReminder({ ...this.props.reminder, fontColor });
     };
 
     setFirstInputRef = (input?: HTMLInputElement | null) => {
@@ -73,7 +82,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
         return (
             <div>
                 <Row>
-                    <Col xs="12">
+                    <Col md="12">
                         <FormGroup>
                             <Label for="txtTitle">
                                 <strong>Title</strong>
@@ -112,21 +121,6 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                                 maxLength={Number(process.env.REACT_APP_REMINDER_CITY_MAX_LENGTH)}
                             />
                             {this.renderCityErrorMessage()}
-                        </FormGroup>
-                        <FormGroup className="mt-2 mb-2">
-                            <Label for="txtToTime">
-                                Pick a color
-                            </Label>
-                            <Button
-                                className="m-2"
-                                onClick={this.toggleColorPickerModal}
-                                style={{
-                                    backgroundColor: this.props.reminder.color,
-                                    color: this.props.reminder.color
-                                }}
-                            >
-                                Color
-                            </Button>
                         </FormGroup>
                         <FormGroup>
                             <Label for="txtFromDate">
@@ -183,9 +177,40 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             <Label for="chkRecurrenceForAYear" check>Recurrence for the rest of the year</Label>
                             {this.renderRecurrenceForAYearErrorMessage()}
                         </FormGroup>
+                        <FormGroup className="d-flex-inline mt-2">
+                            <Button
+                                id="btnOpenBkgColorPickerModal"
+                                title="Pick a background color"
+                                className="mr-2"
+                                onClick={this.toggleBkgColorPickerModal}
+                            >
+                                Pick a background color
+                            </Button>
+                            <Button
+                                id="btnOpenFontColorPickerModal"
+                                title="Pick a font color"
+                                onClick={this.toggleFontColorPickerModal}
+                            >
+                                Pick a font color
+                            </Button>
+                        </FormGroup>
+                        <FormGroup>
+                            <div
+                                id="divResultColorPickerModal"
+                                className="p-2"
+                                style={{
+                                    backgroundColor: this.props.reminder.bkgColor,
+                                    color: this.props.reminder.fontColor,
+                                    textAlign: "center"
+                                }}
+                            >
+                                Sample
+                            </div>
+                        </FormGroup>
                     </Col>
                 </Row>
-                {this.renderColorPickerModal()}
+                {this.renderBkgColorPickerModal()}
+                {this.renderFontColorPickerModal()}
             </div>
         );
     }
@@ -248,15 +273,15 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
             : (<div />);
     }
 
-    renderColorPickerModal = () => {
+    renderBkgColorPickerModal = () => {
         return (
 
             <Modal
-                isOpen={this.state.showColorPickerModal}
-                toggle={this.toggleColorPickerModal}
+                isOpen={this.state.showBkgColorPickerModal}
+                toggle={this.toggleBkgColorPickerModal}
             >
-                <ModalHeader toggle={this.toggleColorPickerModal}>
-                    Choose a color for your Reminder
+                <ModalHeader toggle={this.toggleBkgColorPickerModal}>
+                    Choose a background color for your Reminder
                 </ModalHeader>
                 <ModalBody>
                     <ChromePicker
@@ -267,12 +292,44 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                                 }
                             }
                         }}
-                        color={this.props.reminder.color}
-                        onChangeComplete={this.handleColorChange}
+                        color={this.props.reminder.bkgColor}
+                        onChangeComplete={this.handleBkgColorChange}
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={this.toggleColorPickerModal}>
+                    <Button onClick={this.toggleBkgColorPickerModal}>
+                        Ok
+                    </Button>
+                </ModalFooter>
+            </Modal>
+        );
+    }
+
+    renderFontColorPickerModal = () => {
+        return (
+
+            <Modal
+                isOpen={this.state.showFontColorPickerModal}
+                toggle={this.toggleFontColorPickerModal}
+            >
+                <ModalHeader toggle={this.toggleFontColorPickerModal}>
+                    Choose a font color for your Reminder
+                </ModalHeader>
+                <ModalBody>
+                    <ChromePicker
+                        styles={{
+                            default: {
+                                picker: {
+                                    width: "inherited"
+                                }
+                            }
+                        }}
+                        color={this.props.reminder.fontColor}
+                        onChangeComplete={this.handleFontColorChange}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <Button onClick={this.toggleFontColorPickerModal}>
                         Ok
                     </Button>
                 </ModalFooter>

@@ -6,6 +6,8 @@ import { IReminderStore } from "../../redux/reminder/store.redux";
 import { validateForm } from "./form/form-validations";
 import { IReminder } from "../../entties/reminder.entity";
 import { ReminderService } from "../../services/reminder.service";
+import { ICalendarItem } from "../../components/calendar";
+import { ReminderUtil } from "../../utils/reminder.util";
 
 type ReminderGroup = { [key: string]: IReminder[] };
 type Store = { reminderStore: IReminderStore };
@@ -20,6 +22,7 @@ export interface IReminderPageProps extends RouteComponentProps<{}> {
     updatedSuccessful?: boolean;
     deletedSuccessful?: boolean;
     formValid?: boolean;
+    calendarItems: ICalendarItem[];
     setReminder: (reminder: IReminder) => void;
     resetReminderFlags: () => void;
     getAllRemindersByDate: (date: Date, remindersGroupedByDate: ReminderGroup) => void;
@@ -32,6 +35,7 @@ export interface IReminderPageProps extends RouteComponentProps<{}> {
 export const MapStateToProps = ({ reminderStore }: Store) => (
     {
         ...reminderStore,
+        calendarItems: reminderStore.remindersForDateYearAndMonth.map(ReminderUtil.calendarItemMapper),
         formValid: validateForm(reminderStore)
     }
 );

@@ -9,6 +9,7 @@ export interface IReminder {
     dateKeys?: string[];
     city?: string;
     weather?: string;
-    color?: string;
+    bkgColor?: string;
+    fontColor?: string;
     recurrenceForAYear?: boolean;
 }

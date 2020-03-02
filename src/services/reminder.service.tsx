@@ -4,13 +4,12 @@ import moment from "moment";
 import { IReminder } from "../entties/reminder.entity";
 import {
     setReminder, setReminders, setRemindersForDate,
-    setRemindersForDateYearAndMonth, setRemindersGroupedByDate, resetReminderFlags, setReminderCreatedFlag, setReminderUpdatedFlag, setReminderDeletedFlag
+    setRemindersForDateYearAndMonth, setRemindersGroupedByDate, resetReminderFlags,
+    setReminderCreatedFlag, setReminderUpdatedFlag, setReminderDeletedFlag
 } from "../redux/reminder/actions.redux";
-import { DateUtil } from "../utils/date.util";
-import { WeatherService } from "./weather.service";
+import { ReminderUtil } from "../utils/reminder.util";
 
 type ReminderGroup = { [key: string]: IReminder[] };
-type CityWeather = { [key: string]: string }
 
 export class ReminderService {
 
@@ -29,7 +28,7 @@ export class ReminderService {
     static getAllRemindersByDate(date: Date, remindersGroupedByDate: ReminderGroup) {
         return (dispatch: Dispatch) => {
             const dateStr = moment(date).format(process.env.REACT_APP_DATE_FORMAT);
-            const remindersForDate = remindersGroupedByDate[dateStr];
+            const remindersForDate = remindersGroupedByDate[dateStr] || [];
 
             dispatch(setRemindersForDate(remindersForDate));
         }
@@ -38,7 +37,7 @@ export class ReminderService {
     static getAllRemindersByYearAndMonthWithWeather(date: Date, remindersGroupedByDate: ReminderGroup) {
         return async (dispatch: Dispatch) => {
             const dateStr = moment(date).format(process.env.REACT_APP_DATE_YEAR_MONTH_FORMAT);
-            const remindersForDateYearAndMonth = await ReminderService.populateWeather(remindersGroupedByDate[dateStr]);
+            const remindersForDateYearAndMonth = await ReminderUtil.populateWeather(remindersGroupedByDate[dateStr]);
 
             dispatch(setRemindersForDateYearAndMonth(remindersForDateYearAndMonth));
         }
@@ -46,14 +45,14 @@ export class ReminderService {
 
     static create(reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) {
         return (dispatch: Dispatch) => {
-            const dateKeys = DateUtil.generateReminderDateKeys(reminder);
+            const dateKeys = ReminderUtil.generateReminderDateKeys(reminder);
 
             if (dateKeys.length > 0) {
                 const id = new Date().getTime();
                 reminder = { ...reminder, id, dateKeys };
 
                 const newReminders = [reminder].concat(reminders);
-                const newRemindersGroupedByDate = ReminderService.groupReminder(reminder, remindersGroupedByDate);
+                const newRemindersGroupedByDate = ReminderUtil.groupReminder(reminder, remindersGroupedByDate);
 
                 dispatch(setReminderCreatedFlag(true));
                 dispatch(setReminders(newReminders));
@@ -67,17 +66,17 @@ export class ReminderService {
     static update(reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) {
         return (dispatch: Dispatch) => {
             const oldReminder = reminders.find(r => r.id === reminder.id);
-            const dateKeys = DateUtil.generateReminderDateKeys(reminder);
+            const dateKeys = ReminderUtil.generateReminderDateKeys(reminder);
             let newReminders: IReminder[] = Object.assign([], reminders);
             let newRemindersGroupedByDate: ReminderGroup = Object.assign({}, remindersGroupedByDate);
 
             if (oldReminder && oldReminder.dateKeys && dateKeys.length > 0) {
                 newReminders = reminders.filter(r => r.id !== reminder.id);
-                newRemindersGroupedByDate = ReminderService.removeGroupReminder(oldReminder, remindersGroupedByDate);
+                newRemindersGroupedByDate = ReminderUtil.removeGroupReminder(oldReminder, remindersGroupedByDate);
 
                 reminder = { ...reminder, dateKeys };
                 newReminders = [reminder].concat(newReminders);
-                newRemindersGroupedByDate = ReminderService.groupReminder(reminder, remindersGroupedByDate);
+                newRemindersGroupedByDate = ReminderUtil.groupReminder(reminder, remindersGroupedByDate);
 
                 dispatch(setReminderUpdatedFlag(true));
                 dispatch(setReminders(newReminders));
@@ -93,11 +92,11 @@ export class ReminderService {
             const reminder = reminders.find(r => r.id === id);
 
             if (reminder) {
-                const dateKeys = DateUtil.generateReminderDateKeys(reminder);
+                const dateKeys = ReminderUtil.generateReminderDateKeys(reminder);
 
                 if (dateKeys.length > 0) {
                     const newReminders = reminders.filter(r => r.id !== id);
-                    const newRemindersGroupedByDate = ReminderService.removeGroupReminder(reminder, remindersGroupedByDate);
+                    const newRemindersGroupedByDate = ReminderUtil.removeGroupReminder(reminder, remindersGroupedByDate);
 
                     dispatch(setReminderDeletedFlag(true));
                     dispatch(setReminders(newReminders));
@@ -109,65 +108,5 @@ export class ReminderService {
                 dispatch(setReminderDeletedFlag(false));
             }
         }
-    }
-
-    private static async populateWeather(reminders: IReminder[]): Promise<IReminder[]> {
-        let result: IReminder[] = [];
-        const cityWeatherMap: CityWeather = {};
-
-        for (let i = 0; i < reminders.length; i++) {
-            const reminder = reminders[i];
-
-            if (reminder.city) {
-                let weather = cityWeatherMap[reminder.city];
-
-                if (!weather) {
-                    const { data } = await WeatherService.getWeatherInfoByCity(reminder.city);
-                    weather = data.weather.description;
-                }
-
-                result.push({ ...reminder, weather });
-            } else {
-                result.push({ ...reminder });
-            }
-        }
-
-        return result;
-    }
-
-    private static groupReminder(reminder: IReminder, remindersGroupedByDate: ReminderGroup) {
-        if (reminder.dateKeys) {
-            for (let i = 0; i < reminder.dateKeys.length; i++) {
-                const dateKey = reminder.dateKeys[i];
-                remindersGroupedByDate = ReminderService.putReminder(reminder, dateKey, remindersGroupedByDate);
-            }
-        }
-
-        return remindersGroupedByDate;
-    }
-
-    private static putReminder(reminder: IReminder, dateKey: string, remindersGroupedByDate: ReminderGroup): ReminderGroup {
-        return {
-            ...remindersGroupedByDate,
-            [dateKey]: [reminder].concat(remindersGroupedByDate[dateKey] || [])
-        };
-    }
-
-    private static removeGroupReminder(reminder: IReminder, remindersGroupedByDate: ReminderGroup) {
-        if (reminder.dateKeys) {
-            for (let i = 0; i < reminder.dateKeys.length; i++) {
-                const dateKey = reminder.dateKeys[i];
-                remindersGroupedByDate = ReminderService.removeReminder(reminder, dateKey, remindersGroupedByDate);
-            }
-        }
-
-        return remindersGroupedByDate;
-    }
-
-    private static removeReminder(reminder: IReminder, dateKey: string, remindersGroupedByDate: ReminderGroup): ReminderGroup {
-        return {
-            ...remindersGroupedByDate,
-            [dateKey]: remindersGroupedByDate[dateKey].filter(r => r.id !== reminder.id)
-        };
     }
 }

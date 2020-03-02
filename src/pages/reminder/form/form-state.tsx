@@ -1,7 +1,9 @@
 export interface IReminderFormState {
-    showColorPickerModal: boolean;
+    showBkgColorPickerModal: boolean;
+    showFontColorPickerModal: boolean;
 }
 
 export const ReminderFormInitialState: IReminderFormState = {
-    showColorPickerModal: false
+    showBkgColorPickerModal: false,
+    showFontColorPickerModal: false
 };

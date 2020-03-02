@@ -3,11 +3,13 @@ export interface IReminderPageState {
     showUpdateModal: boolean;
     showRemindersForDateModal: boolean;
     showDeleteModal: boolean;
+    calendarDate: Date;
 }
 
 export const ReminderPageInitialState: IReminderPageState = {
     showCreateModal: false,
     showUpdateModal: false,
     showRemindersForDateModal: false,
-    showDeleteModal: false
+    showDeleteModal: false,
+    calendarDate: new Date()
 };

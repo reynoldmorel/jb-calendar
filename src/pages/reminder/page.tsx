@@ -6,7 +6,9 @@ import { IReminderPageProps, MapStateToProps, MapDispatchToProps } from "./page-
 import ReminderForm from "./form/form";
 import { IReminderPageState, ReminderPageInitialState } from "./page-state";
 import { ReminderStoreInitialState } from "../../redux/reminder/store.redux";
-import { IReminder } from "../../entties";
+import { IReminder } from "../../entties/reminder.entity";
+import { Calendar } from "../../components/calendar/calendar";
+import moment from "moment";
 
 class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState> {
 
@@ -16,6 +18,10 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         super(props);
 
         this.state = ReminderPageInitialState;
+    }
+
+    componentDidMount() {
+        this.loadRemindersByCalendarDate();
     }
 
     componentDidUpdate(prevProps: IReminderPageProps) {
@@ -44,6 +50,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         this.setState({ showCreateModal: false });
         this.clearReminder();
         this.props.resetReminderFlags();
+        this.loadRemindersByCalendarDate();
     }
 
     create = (e: MouseEvent<HTMLFormElement>) => {
@@ -65,6 +72,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         this.setState({ showUpdateModal: false });
         this.clearReminder();
         this.props.resetReminderFlags();
+        this.loadRemindersByCalendarDate();
     }
 
     update = (e: MouseEvent<HTMLFormElement>) => {
@@ -86,6 +94,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         this.setState({ showDeleteModal: false });
         this.props.setReminder(ReminderStoreInitialState.reminder);
         this.props.resetReminderFlags();
+        this.loadRemindersByCalendarDate();
     }
 
     delete = (e: MouseEvent<HTMLFormElement>) => {
@@ -112,13 +121,40 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         this.formFirstInput = input;
     }
 
+    onCalendarDateChange = (year: number, month: number, day: number) => {
+
+        this.setState({ calendarDate: moment([year, month, day]).toDate() });
+    }
+
+    onCalendarClickDay = (year: number, month: number, day: number, dataItems: IReminder[]) => {
+        console.log(dataItems);
+
+        this.setState({ calendarDate: moment([year, month, day]).toDate() });
+    }
+
+    loadRemindersByCalendarDate = () => {
+        this.props.getAllRemindersByYearAndMonthWithWeather(this.state.calendarDate, this.props.remindersGroupedByDate);
+    }
+
     render() {
         return (
             <div>
-                <Button onClick={this.openCreateModal}>
+                <Button
+                    id="btnOpenCreateModal"
+                    title="Create Reminder"
+                    onClick={this.openCreateModal}
+                >
                     Create Reminder
                 </Button>
 
+                <Calendar
+                    date={this.state.calendarDate}
+                    items={this.props.calendarItems}
+                    onDateChange={this.onCalendarDateChange}
+                    onClickDay={this.onCalendarClickDay}
+                >
+
+                </Calendar>
                 {this.renderCreateModal()}
                 {this.renderUpdateModal()}
                 {this.renderDeleteModal()}
@@ -144,10 +180,16 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                     </ModalBody>
                     <ModalFooter>
                         {this.renderCreateMessage()}
-                        <Button onClick={this.closeCreateModal}>
+                        <Button
+                            id="btnCancelCreate"
+                            title="Cancel"
+                            onClick={this.closeCreateModal}
+                        >
                             Cancel
                         </Button>
                         <Button
+                            id="btnCreate"
+                            title="Create"
                             type="submit"
                             disabled={!this.props.formValid}
                         >
@@ -195,10 +237,16 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                     </ModalBody>
                     <ModalFooter>
                         {this.renderUpdateMessage()}
-                        <Button onClick={this.closeUpdateModal}>
+                        <Button
+                            id="btnCancelUpdate"
+                            title="Cancel"
+                            onClick={this.closeUpdateModal}
+                        >
                             Cancel
                         </Button>
                         <Button
+                            id="btnUpdate"
+                            title="Update"
                             type="submit"
                             disabled={!this.props.formValid}
                         >
@@ -238,11 +286,17 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                     <ModalFooter>
                         {this.renderDeleteMessage()}
                         <Button
+                            id="btnCancelDelete"
+                            title="No"
                             onClick={this.closeDeleteModal}
                         >
                             No
                         </Button>
-                        <Button type="submit">
+                        <Button
+                            id="btnDelete"
+                            title="Yes"
+                            type="submit"
+                        >
                             Yes
                         </Button>
                     </ModalFooter>
