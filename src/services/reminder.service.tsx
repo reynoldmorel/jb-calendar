@@ -19,18 +19,16 @@ export class ReminderService {
         }
     }
 
-    static resetReminderFlags() {
+    static setRemindersForDate(remindersForDate: IReminder[]) {
         return (dispatch: Dispatch) => {
-            dispatch(resetReminderFlags());
+            dispatch(setRemindersForDate(remindersForDate));
         }
     }
 
-    static getAllRemindersByDate(date: Date, remindersGroupedByDate: ReminderGroup) {
-        return (dispatch: Dispatch) => {
-            const dateStr = moment(date).format(process.env.REACT_APP_DATE_FORMAT);
-            const remindersForDate = remindersGroupedByDate[dateStr] || [];
 
-            dispatch(setRemindersForDate(remindersForDate));
+    static resetReminderFlags() {
+        return (dispatch: Dispatch) => {
+            dispatch(resetReminderFlags());
         }
     }
 
@@ -76,7 +74,7 @@ export class ReminderService {
 
                 reminder = { ...reminder, dateKeys };
                 newReminders = [reminder].concat(newReminders);
-                newRemindersGroupedByDate = ReminderUtil.groupReminder(reminder, remindersGroupedByDate);
+                newRemindersGroupedByDate = ReminderUtil.groupReminder(reminder, newRemindersGroupedByDate);
 
                 dispatch(setReminderUpdatedFlag(true));
                 dispatch(setReminders(newReminders));

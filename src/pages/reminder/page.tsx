@@ -1,6 +1,6 @@
 import React, { PureComponent, MouseEvent } from "react";
 import { connect } from "react-redux";
-import { Alert, Button, Form, Modal, ModalHeader, ModalBody, ModalFooter, Row, Col } from "reactstrap";
+import { Alert, Button, Form, Modal, ModalHeader, ModalBody, ModalFooter, Table } from "reactstrap";
 
 import { IReminderPageProps, MapStateToProps, MapDispatchToProps } from "./page-props";
 import ReminderForm from "./form/form";
@@ -9,6 +9,7 @@ import { ReminderStoreInitialState } from "../../redux/reminder/store.redux";
 import { IReminder } from "../../entties/reminder.entity";
 import { Calendar } from "../../components/calendar/calendar";
 import moment from "moment";
+import { ICalendarItem } from "../../components/calendar";
 
 class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState> {
 
@@ -63,8 +64,19 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         }
     }
 
+    openViewRemindersForADayModal = (date: Date, reminders: IReminder[]) => {
+        this.setState({ showViewRemindersForADayModal: true });
+        this.props.setRemindersForDate(reminders);
+    }
+
+    closeViewRemindersForADayModal = () => {
+        this.setState({ showViewRemindersForADayModal: false });
+        this.props.setRemindersForDate([]);
+    }
+
     openUpdateModal = (reminder: IReminder) => {
-        this.setState({ showUpdateModal: true });
+        this.setState({ showUpdateModal: true, showViewRemindersForADayModal: false });
+        this.props.setRemindersForDate([]);
         this.props.setReminder(reminder);
     }
 
@@ -86,14 +98,16 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
     }
 
     openDeleteModal = (reminder: IReminder) => {
-        this.setState({ showDeleteModal: true });
-        this.clearReminder();
+        this.setState({ showDeleteModal: true, showViewRemindersForADayModal: false });
+        this.props.setRemindersForDate([]);
+        this.props.setReminder(reminder);
     }
 
     closeDeleteModal = () => {
         this.setState({ showDeleteModal: false });
         this.props.setReminder(ReminderStoreInitialState.reminder);
         this.props.resetReminderFlags();
+        this.clearReminder();
         this.loadRemindersByCalendarDate();
     }
 
@@ -122,14 +136,18 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
     }
 
     onCalendarDateChange = (year: number, month: number, day: number) => {
-
         this.setState({ calendarDate: moment([year, month, day]).toDate() });
     }
 
-    onCalendarClickDay = (year: number, month: number, day: number, dataItems: IReminder[]) => {
-        console.log(dataItems);
+    onCalendarClickDay = (year: number, month: number, day: number, dataItems: ICalendarItem[]) => {
+        const date = moment([year, month, day]).toDate();
 
-        this.setState({ calendarDate: moment([year, month, day]).toDate() });
+        if (dataItems.length > 0) {
+            const reminders = dataItems.map(i => i.data as IReminder);
+            this.openViewRemindersForADayModal(date, reminders);
+        }
+
+        this.setState({ calendarDate: date });
     }
 
     loadRemindersByCalendarDate = () => {
@@ -152,9 +170,9 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                     items={this.props.calendarItems}
                     onDateChange={this.onCalendarDateChange}
                     onClickDay={this.onCalendarClickDay}
-                >
+                />
 
-                </Calendar>
+                {this.renderViewRemindersForADayModal()}
                 {this.renderCreateModal()}
                 {this.renderUpdateModal()}
                 {this.renderDeleteModal()}
@@ -217,6 +235,72 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         } else {
             return (<div />);
         }
+    }
+
+    renderViewRemindersForADayModal = () => {
+        return (
+            <Modal
+                isOpen={this.state.showViewRemindersForADayModal}
+                toggle={this.closeViewRemindersForADayModal}
+            >
+                <ModalHeader toggle={this.closeViewRemindersForADayModal}>
+                    {`Reminders for ${moment(this.state.calendarDate).format(process.env.REACT_APP_DATE_FORMAT)}`}
+                </ModalHeader>
+                <ModalBody>
+                    <Table responsive hover>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Time</th>
+                                <th>City</th>
+                                <th>Weather</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.remindersForDate.map((r, i) => (
+                                (
+                                    <tr key={`data_${i}`} style={{
+                                        backgroundColor: r.bkgColor,
+                                        color: r.fontColor
+                                    }}>
+                                        <td>{r.title}</td>
+                                        <td>{`${r.fromTimeStr} to ${r.toTimeStr}`}</td>
+                                        <td>{r.city}</td>
+                                        <td>{r.weather}</td>
+                                        <td>
+                                            <Button
+                                                id="btnOpenUpdateModal"
+                                                title="Edit this Reminder"
+                                                onClick={(e) => this.openUpdateModal(r)}
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                id="btnOpenDeleteModal"
+                                                title="Delete this Reminder"
+                                                onClick={(e) => this.openDeleteModal(r)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                )
+                            ))}
+                        </tbody>
+                    </Table >
+                </ModalBody>
+                <ModalFooter>
+                    <Button
+                        id="btnOkViewRemindersForADay"
+                        title="Ok"
+                        onClick={this.closeViewRemindersForADayModal}
+                    >
+                        Ok
+                    </Button>
+                </ModalFooter>
+            </Modal>
+        );
     }
 
     renderUpdateModal = () => {

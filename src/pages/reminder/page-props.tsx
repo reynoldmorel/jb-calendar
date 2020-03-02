@@ -25,7 +25,7 @@ export interface IReminderPageProps extends RouteComponentProps<{}> {
     calendarItems: ICalendarItem[];
     setReminder: (reminder: IReminder) => void;
     resetReminderFlags: () => void;
-    getAllRemindersByDate: (date: Date, remindersGroupedByDate: ReminderGroup) => void;
+    setRemindersForDate: (remindersForDate: IReminder[]) => void;
     getAllRemindersByYearAndMonthWithWeather: (date: Date, remindersGroupedByDate: ReminderGroup) => void;
     create: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => void;
     update: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => void;
@@ -43,7 +43,7 @@ export const MapStateToProps = ({ reminderStore }: Store) => (
 export const MapDispatchToProps = (dispatch: ThunkDispatch<IReminderStore, void, Action>) => ({
     setReminder: (reminder: IReminder) => dispatch(ReminderService.setReminder(reminder)),
     resetReminderFlags: () => dispatch(ReminderService.resetReminderFlags()),
-    getAllRemindersByDate: (date: Date, remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.getAllRemindersByDate(date, remindersGroupedByDate)),
+    setRemindersForDate: (remindersForDate: IReminder[]) => dispatch(ReminderService.setRemindersForDate(remindersForDate)),
     getAllRemindersByYearAndMonthWithWeather: (date: Date, remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.getAllRemindersByYearAndMonthWithWeather(date, remindersGroupedByDate)),
     create: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.create(reminder, reminders, remindersGroupedByDate)),
     update: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.update(reminder, reminders, remindersGroupedByDate)),
