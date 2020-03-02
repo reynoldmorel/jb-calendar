@@ -29,13 +29,15 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         this.loadRemindersByCalendarDate();
     }
 
-    componentDidUpdate(prevProps: IReminderPageProps) {
+    componentDidUpdate(prevProps: IReminderPageProps, prevState: IReminderPageState) {
         if (this.props.createdSuccessful && this.props.reminder === prevProps.reminder) {
             this.resetCreateModalAfterCreationSuccessFul();
         } else if (this.props.updatedSuccessful) {
             this.closeUpdateModal();
         } else if (this.props.deletedSuccessful) {
             this.closeDeleteModal();
+        } else if (prevState.calendarDate !== this.state.calendarDate) {
+            this.loadRemindersByCalendarDate();
         }
     }
 
