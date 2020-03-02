@@ -35,8 +35,8 @@ export interface IReminderPageProps extends RouteComponentProps<{}> {
 export const MapStateToProps = ({ reminderStore }: Store) => (
     {
         ...reminderStore,
+        formValid: validateForm(reminderStore),
         calendarItems: reminderStore.remindersForDateYearAndMonth.map(ReminderUtil.calendarItemMapper),
-        formValid: validateForm(reminderStore)
     }
 );
 

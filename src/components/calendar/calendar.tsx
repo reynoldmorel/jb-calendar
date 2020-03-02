@@ -15,10 +15,10 @@ export class Calendar extends PureComponent<ICalendarProps> {
 
     private calendarItemsGroupedByDate: CalendarItemGroup = {};
 
-    componentDidUpdate() {
-        const { dateFormat, timeFormat, dateAndTimeSeparator } = this.props;
+    componentWillUpdate(nextProps: ICalendarProps) {
+        const { dateFormat, timeFormat, dateAndTimeSeparator, items } = nextProps;
         const dateTimeFormat = `${dateFormat}${dateAndTimeSeparator}${timeFormat}`
-        this.calendarItemsGroupedByDate = CalendarUtil.groupCalendarItems(this.props.items, dateTimeFormat);
+        this.calendarItemsGroupedByDate = CalendarUtil.groupCalendarItems(items, dateTimeFormat);
     }
 
     prevYear = () => {
@@ -94,8 +94,11 @@ export class Calendar extends PureComponent<ICalendarProps> {
                         </FormGroup>
                     </Col>
                 </Row>
-
-                {this.renderCalendarDays()}
+                <Row className="m-5">
+                    <Col md="12">
+                        {this.renderCalendarDays()}
+                    </Col>
+                </Row>
             </div>
         );
     }

@@ -76,7 +76,7 @@ export class ReminderUtil {
         return DateUtil.getFromAndToAsDate(`${fromDateStr} ${fromTimeStr}`, `${toDateStr} ${toTimeStr}`, dateTimeFormat);
     }
 
-    static async populateWeather(reminders: IReminder[] = []): Promise<IReminder[]> {
+    static async populateWeather(reminders: IReminder[] = []) {
         let result: IReminder[] = [];
         const cityWeatherMap: CityWeather = {};
 
