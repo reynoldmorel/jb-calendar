@@ -15,11 +15,12 @@ export class CalendarDay extends PureComponent<ICalendarDayProps> {
     };
 
     render() {
-        const { date } = this.props;
+        const { date, selected, disabled } = this.props;
+        const weekendDay = date.getDay() === 0 || date.getDay() === 6;
 
         return (
             <div
-                className={`day-col${this.props.disabled ? " disabled-day" : ""}${this.props.selected ? " current-day" : ""}`}
+                className={`day-col${disabled ? " disabled-day" : ""}${selected ? " current-day" : ""}${weekendDay ? " weekend-day" : ""}`}
                 onClick={this.onClickDay}
             >
                 <p

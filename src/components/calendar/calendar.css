@@ -46,6 +46,10 @@
     background-color: #e2e2e2;
 }
 
+.jb-calendar .weekend-day p {
+    color: #58a3e4;
+}
+
 .jb-calendar .days-name-col {
     text-align: center;
 }
