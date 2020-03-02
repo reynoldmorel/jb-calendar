@@ -35,7 +35,11 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         } else if (this.props.updatedSuccessful) {
             this.closeUpdateModal();
         } else if (this.props.deletedSuccessful) {
-            this.closeDeleteModal();
+            if (this.state.showDeleteModal) {
+                this.closeDeleteModal();
+            } else if (this.state.showDeleteAllModal) {
+                this.closeDeleteAllModal();
+            }
         } else if (prevState.calendarDate !== this.state.calendarDate) {
             this.loadRemindersByCalendarDate();
         }
@@ -125,8 +129,27 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         const { reminder, reminders, remindersGroupedByDate } = this.props;
 
         if (reminder && reminder.id !== undefined) {
-            this.props.deleteById(reminders, remindersGroupedByDate, reminder.id);
+            this.props.deleteById(reminder.id, reminders, remindersGroupedByDate);
         }
+    }
+
+    openDeleteAllModal = () => {
+        this.setState({ showDeleteAllModal: true, showViewRemindersForADayModal: false });
+    }
+
+    closeDeleteAllModal = () => {
+        this.setState({ showDeleteAllModal: false });
+        this.props.resetReminderFlags();
+        this.props.setRemindersForDate([]);
+        this.loadRemindersByCalendarDate();
+    }
+
+    deleteAll = (e: MouseEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const { remindersForDate, reminders, remindersGroupedByDate } = this.props;
+        const ids = remindersForDate.map(r => r.id as number);
+        this.props.deleteAll(ids, reminders, remindersGroupedByDate);
     }
 
     clearReminder = () => {
@@ -188,6 +211,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 {this.renderViewRemindersForADayModal()}
                 {this.renderUpdateModal()}
                 {this.renderDeleteModal()}
+                {this.renderDeleteAllModal()}
             </div>
         );
     }
@@ -311,6 +335,14 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 </ModalBody>
                 <ModalFooter>
                     <Button
+                        id="btnOpenDeleteAllModal"
+                        title="Delete all"
+                        onClick={this.openDeleteAllModal}
+                        color="danger"
+                    >
+                        Delete All
+                    </Button>
+                    <Button
                         id="btnOkViewRemindersForADay"
                         title="Ok"
                         onClick={this.closeViewRemindersForADayModal}
@@ -424,6 +456,57 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
             ? (
                 <Alert id="amDeleteFailed" color="danger">
                     {`There was a problem trying to delete "${this.props.reminder.title}".`}
+                </Alert>
+            )
+            : (<div />);
+    }
+
+    renderDeleteAllModal = () => {
+        return (
+            <Modal
+                isOpen={this.state.showDeleteAllModal}
+                toggle={this.closeDeleteAllModal}
+            >
+                <Form onSubmit={this.deleteAll}>
+                    <ModalHeader toggle={this.closeDeleteAllModal}>
+                        {`About to delete all Reminders for ${moment(this.state.calendarDate).format(process.env.REACT_APP_DATE_FORMAT)}`}
+                    </ModalHeader>
+                    <ModalBody>
+                        <p>
+                            There may be reminders with recurrence for the rest of the year. If you remove them, all recurrences will be deleted as well.
+                        </p>
+                        <p>
+                            {`Are you sure you want to delete all reminders for "${moment(this.state.calendarDate).format(process.env.REACT_APP_DATE_FORMAT)}"?`}
+                        </p>
+                    </ModalBody>
+                    <ModalFooter>
+                        {this.renderDeleteAllMessage()}
+                        <Button
+                            id="btnCancelDeleteAll"
+                            title="No"
+                            onClick={this.closeDeleteAllModal}
+                        >
+                            No
+                        </Button>
+                        <Button
+                            id="btnDeleteAll"
+                            title="Yes"
+                            type="submit"
+                            color="danger"
+                        >
+                            Yes
+                        </Button>
+                    </ModalFooter>
+                </Form>
+            </Modal>
+        );
+    }
+
+    renderDeleteAllMessage = () => {
+        return this.props.deletedSuccessful === false
+            ? (
+                <Alert id="amDeleteFailed" color="danger">
+                    {`There was a problem trying to delete reminders from "${moment(this.state.calendarDate).format(process.env.REACT_APP_DATE_FORMAT)}".`}
                 </Alert>
             )
             : (<div />);

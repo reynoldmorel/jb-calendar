@@ -48,7 +48,8 @@ export class CalendarDay extends PureComponent<ICalendarDayProps> {
                     style={{
                         color: calendarItem.fontColor || "#ffffff",
                         padding: "0px 5px",
-                        textAlign: "center"
+                        textAlign: "center",
+                        margin: "5px 0px"
                     }}
                 >
                     {calendarItem.displayText}

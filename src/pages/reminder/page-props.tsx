@@ -29,7 +29,8 @@ export interface IReminderPageProps extends RouteComponentProps<{}> {
     getAllRemindersByYearAndMonthWithWeather: (date: Date, remindersGroupedByDate: ReminderGroup) => void;
     create: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => void;
     update: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => void;
-    deleteById: (reminders: IReminder[], remindersGroupedByDate: ReminderGroup, id?: number) => void;
+    deleteById: (id: number, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => void;
+    deleteAll: (ids: number[], reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => void;
 }
 
 export const MapStateToProps = ({ reminderStore }: Store) => (
@@ -47,5 +48,6 @@ export const MapDispatchToProps = (dispatch: ThunkDispatch<IReminderStore, void,
     getAllRemindersByYearAndMonthWithWeather: (date: Date, remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.getAllRemindersByYearAndMonthWithWeather(date, remindersGroupedByDate)),
     create: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.create(reminder, reminders, remindersGroupedByDate)),
     update: (reminder: IReminder, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.update(reminder, reminders, remindersGroupedByDate)),
-    deleteById: (reminders: IReminder[], remindersGroupedByDate: ReminderGroup, id?: number) => dispatch(ReminderService.deleteById(reminders, remindersGroupedByDate, id))
+    deleteById: (id: number, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.deleteById(id, reminders, remindersGroupedByDate)),
+    deleteAll: (ids: number[], reminders: IReminder[], remindersGroupedByDate: ReminderGroup) => dispatch(ReminderService.deleteAll(ids, reminders, remindersGroupedByDate))
 });

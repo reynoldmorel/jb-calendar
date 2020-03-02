@@ -4,6 +4,7 @@ import { WeatherService } from "../services/weather.service";
 import { ICalendarItem } from "../components/calendar/calendar-item";
 
 type ReminderGroup = { [key: string]: IReminder[] };
+type DeleteResult = { newReminders: IReminder[], newRemindersGroupedByDate: ReminderGroup };
 type CityWeather = { [key: string]: string }
 
 export class ReminderUtil {
@@ -158,5 +159,21 @@ export class ReminderUtil {
             dateKeys: reminder.dateKeys,
             data: reminder
         };
+    }
+
+    static deleteById(id: number, reminders: IReminder[], remindersGroupedByDate: ReminderGroup): DeleteResult | undefined {
+        const reminder = reminders.find(r => r.id === id);
+
+        if (reminder) {
+            const dateKeys = ReminderUtil.generateReminderDateKeys(reminder);
+
+            if (dateKeys.length > 0) {
+                const newReminders = reminders.filter(r => r.id !== id);
+                const newRemindersGroupedByDate = ReminderUtil.removeGroupReminder(reminder, remindersGroupedByDate);
+
+                return { newReminders, newRemindersGroupedByDate };
+            }
+        }
+        return undefined;
     }
 }

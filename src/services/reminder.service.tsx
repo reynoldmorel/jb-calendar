@@ -85,26 +85,43 @@ export class ReminderService {
         }
     }
 
-    static deleteById(reminders: IReminder[], remindersGroupedByDate: ReminderGroup, id?: number) {
+    static deleteById(id: number, reminders: IReminder[], remindersGroupedByDate: ReminderGroup) {
         return (dispatch: Dispatch) => {
-            const reminder = reminders.find(r => r.id === id);
+            const deleteResult = ReminderUtil.deleteById(id, reminders, remindersGroupedByDate);
 
-            if (reminder) {
-                const dateKeys = ReminderUtil.generateReminderDateKeys(reminder);
+            if (deleteResult) {
+                const { newReminders, newRemindersGroupedByDate } = deleteResult;
 
-                if (dateKeys.length > 0) {
-                    const newReminders = reminders.filter(r => r.id !== id);
-                    const newRemindersGroupedByDate = ReminderUtil.removeGroupReminder(reminder, remindersGroupedByDate);
-
-                    dispatch(setReminderDeletedFlag(true));
-                    dispatch(setReminders(newReminders));
-                    dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
-                } else {
-                    dispatch(setReminderDeletedFlag(false));
-                }
+                dispatch(setReminderDeletedFlag(true));
+                dispatch(setReminders(newReminders));
+                dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
             } else {
                 dispatch(setReminderDeletedFlag(false));
             }
+        }
+    }
+
+    static deleteAll(ids: number[], reminders: IReminder[], remindersGroupedByDate: ReminderGroup) {
+        return (dispatch: Dispatch) => {
+            let newReminders = reminders;
+            let newRemindersGroupedByDate = { ...remindersGroupedByDate };
+
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+
+                const deleteResult = ReminderUtil.deleteById(id, newReminders, newRemindersGroupedByDate);
+
+                if (deleteResult) {
+                    newReminders = deleteResult.newReminders;
+                    newRemindersGroupedByDate = deleteResult.newRemindersGroupedByDate;
+                } else {
+                    dispatch(setReminderDeletedFlag(false));
+                }
+            }
+
+            dispatch(setReminderDeletedFlag(true));
+            dispatch(setReminders(newReminders));
+            dispatch(setRemindersGroupedByDate(newRemindersGroupedByDate));
         }
     }
 }
