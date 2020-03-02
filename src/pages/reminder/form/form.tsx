@@ -93,6 +93,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Label>
                             <Input
                                 id="txtTitle"
+                                data-testid="txtTitle"
                                 autoFocus
                                 onChange={this.handleTitleChange}
                                 value={this.props.reminder.title}
@@ -107,6 +108,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Label>
                             <Input
                                 id="txtDescription"
+                                data-testid="txtDescription"
                                 onChange={this.handleDescriptionChange}
                                 value={this.props.reminder.description}
                                 maxLength={Number(process.env.REACT_APP_REMINDER_DESCRIPTION_MAX_LENGTH)}
@@ -120,6 +122,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Label>
                             <Input
                                 id="txtCity"
+                                data-testid="txtCity"
                                 onChange={this.handleCityChange}
                                 value={this.props.reminder.city}
                                 maxLength={Number(process.env.REACT_APP_REMINDER_CITY_MAX_LENGTH)}
@@ -132,6 +135,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Label>
                             <Input
                                 id="txtFromDate"
+                                data-testid="txtFromDate"
                                 onChange={this.handleFromDateChange}
                                 value={this.props.reminder.fromDateStr}
                                 type="date"
@@ -143,6 +147,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Label>
                             <Input
                                 id="txtFromTime"
+                                data-testid="txtFromTime"
                                 onChange={this.handleFromTimeChange}
                                 value={this.props.reminder.fromTimeStr}
                                 type="time"
@@ -154,6 +159,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Label>
                             <Input
                                 id="txtToDate"
+                                data-testid="txtToDate"
                                 onChange={this.handleToDateChange}
                                 value={this.props.reminder.toDateStr}
                                 type="date"
@@ -165,6 +171,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Label>
                             <Input
                                 id="txtToTime"
+                                data-testid="txtToTime"
                                 onChange={this.handleToTimeChange}
                                 value={this.props.reminder.toTimeStr}
                                 type="time"
@@ -174,6 +181,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                         <FormGroup check>
                             <Input
                                 id="chkRecurrenceForAYear"
+                                data-testid="chkRecurrenceForAYear"
                                 type="checkbox"
                                 onChange={this.handleRecurrenceForAYearChange}
                                 checked={this.props.reminder.recurrenceForAYear}
@@ -184,6 +192,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                         <FormGroup className="d-flex-inline mt-2">
                             <Button
                                 id="btnOpenBkgColorPickerModal"
+                                data-testid="btnOpenBkgColorPickerModal"
                                 title="Pick a background color"
                                 className="mr-2 btn-bkg-color"
                                 onClick={this.toggleBkgColorPickerModal}
@@ -192,6 +201,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             </Button>
                             <Button
                                 id="btnOpenFontColorPickerModal"
+                                data-testid="btnOpenFontColorPickerModal"
                                 title="Pick a font color"
                                 className="btn-font-color"
                                 onClick={this.toggleFontColorPickerModal}
@@ -202,6 +212,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                         <FormGroup>
                             <div
                                 id="divResultColorPickerModal"
+                                data-testid="divResultColorPickerModal"
                                 className="p-2"
                                 style={{
                                     backgroundColor: this.props.reminder.bkgColor,
@@ -223,7 +234,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
     renderTitleErrorMessage = () => {
         return this.props.titleValid === false
             ? (
-                <Alert id="amvTitle" color="danger">
+                <Alert id="amvTitle" data-testid="amvTitle" color="danger">
                     {`Title must have ${process.env.REACT_APP_REMINDER_TITLE_MIN_LENGTH} to ${process.env.REACT_APP_REMINDER_TITLE_MAX_LENGTH} chars.`}
                 </Alert>
             )
@@ -233,7 +244,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
     renderDescriptionErrorMessage = () => {
         return this.props.descriptionValid === false
             ? (
-                <Alert id="amvDescription" color="danger">
+                <Alert id="amvDescription" data-testid="amvDescription" color="danger">
                     {`Description can have a max. of ${process.env.REACT_APP_REMINDER_TITLE_MAX_LENGTH} chars.`}
                 </Alert>
             )
@@ -243,7 +254,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
     renderCityErrorMessage = () => {
         return this.props.cityValid === false
             ? (
-                <Alert id="amvCity" color="danger">
+                <Alert id="amvCity" data-testid="amvCity" color="danger">
                     {`City can have a max. of ${process.env.REACT_APP_REMINDER_TITLE_MAX_LENGTH} chars.`}
                 </Alert>
             )
@@ -253,13 +264,13 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
     renderDateTimeErrorMessage = () => {
         if (this.props.dateTimeValid === false) {
             return (
-                <Alert id="amvDateTime" color="danger">
+                <Alert id="amvDateTime" data-testid="amvDateTime" color="danger">
                     {`"From Datetime" must be higher than "To Datetime".`}
                 </Alert>
             );
         } else if (this.props.dateTimeOverlapValid === false) {
             return (
-                <Alert id="amvDateTimeOverlap" color="danger">
+                <Alert id="amvDateTimeOverlap" data-testid="amvDateTimeOverlap" color="danger">
                     {`Datetime Range overlaps other existing reminders.`}
                 </Alert>
             );
@@ -271,7 +282,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
     renderRecurrenceForAYearErrorMessage = () => {
         return this.props.recurrenceForAYearValid === false
             ? (
-                <Alert id="amvRecurrenceForAYear" color="danger">
+                <Alert id="amvRecurrenceForAYear" data-testid="amvRecurrenceForAYear" color="danger">
                     {`If "Recurrence for the rest of the year" was selected, then Datetime Range must not exceed a month.`}
                 </Alert>
             )

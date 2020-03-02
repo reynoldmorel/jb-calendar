@@ -191,6 +191,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 <Form onSubmit={this.openCreateModal}>
                     <Button
                         id="btnOpenCreateModal"
+                        data-testid="btnOpenCreateModal"
                         title="Create Reminder"
                         className="btn-create"
                         type="submit"
@@ -236,6 +237,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         {this.renderCreateMessage()}
                         <Button
                             id="btnCancelCreate"
+                            data-testid="btnCancelCreate"
                             title="Cancel"
                             onClick={this.closeCreateModal}
                             color="danger"
@@ -244,6 +246,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         </Button>
                         <Button
                             id="btnCreate"
+                            data-testid="btnCreate"
                             title="Create"
                             type="submit"
                             disabled={!this.props.formValid}
@@ -260,13 +263,13 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
     renderCreateMessage = () => {
         if (this.props.createdSuccessful === true) {
             return (
-                <Alert id="amCreateSuceeded" color="success">
+                <Alert id="amCreateSucceeded" data-testid="amCreateSucceeded" color="success">
                     {`Reminder created successfully.`}
                 </Alert>
             );
         } else if (this.props.createdSuccessful === false) {
             return (
-                <Alert id="amCreateFailed" color="danger">
+                <Alert id="amCreateFailed" data-testid="amCreateFailed" color="danger">
                     {`There was a problem trying to create "${this.props.reminder.title}".`}
                 </Alert>
             );
@@ -311,17 +314,25 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                                             <div className="d-flex flex-row">
                                                 <Button
                                                     id="btnOpenUpdateModal"
+                                                    data-testid="btnOpenUpdateModal"
                                                     title="Edit this Reminder"
                                                     onClick={(e) => this.openUpdateModal(r)}
                                                     className="btn-edit"
+                                                    style={{
+                                                        color: r.fontColor
+                                                    }}
                                                 >
                                                     <FontAwesomeIcon icon={faPencilAlt} />
                                                 </Button>
                                                 <Button
                                                     id="btnOpenDeleteModal"
+                                                    data-testid="btnOpenDeleteModal"
                                                     title="Delete this Reminder"
                                                     onClick={(e) => this.openDeleteModal(r)}
                                                     className="btn-delete"
+                                                    style={{
+                                                        color: r.fontColor
+                                                    }}
                                                 >
                                                     <FontAwesomeIcon icon={faTrash} />
                                                 </Button>
@@ -336,6 +347,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                 <ModalFooter>
                     <Button
                         id="btnOpenDeleteAllModal"
+                        data-testid="btnOpenDeleteAllModal"
                         title="Delete all"
                         onClick={this.openDeleteAllModal}
                         color="danger"
@@ -344,6 +356,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                     </Button>
                     <Button
                         id="btnOkViewRemindersForADay"
+                        data-testid="btnOkViewRemindersForADay"
                         title="Ok"
                         onClick={this.closeViewRemindersForADayModal}
                         color="success"
@@ -375,6 +388,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         {this.renderUpdateMessage()}
                         <Button
                             id="btnCancelUpdate"
+                            data-testid="btnCancelUpdate"
                             title="Cancel"
                             onClick={this.closeUpdateModal}
                             color="danger"
@@ -383,6 +397,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         </Button>
                         <Button
                             id="btnUpdate"
+                            data-testid="btnUpdate"
                             title="Update"
                             type="submit"
                             disabled={!this.props.formValid}
@@ -399,7 +414,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
     renderUpdateMessage = () => {
         return this.props.updatedSuccessful === false
             ? (
-                <Alert id="amUpdateFailed" color="danger">
+                <Alert id="amUpdateFailed" data-testid="amUpdateFailed" color="danger">
                     {`There was a problem trying to update "${this.props.reminder.title}".`}
                 </Alert>
             )
@@ -432,6 +447,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         {this.renderDeleteMessage()}
                         <Button
                             id="btnCancelDelete"
+                            data-testid="btnCancelDelete"
                             title="No"
                             onClick={this.closeDeleteModal}
                         >
@@ -439,6 +455,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         </Button>
                         <Button
                             id="btnDelete"
+                            data-testid="btnDelete"
                             title="Yes"
                             type="submit"
                             color="danger"
@@ -454,7 +471,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
     renderDeleteMessage = () => {
         return this.props.deletedSuccessful === false
             ? (
-                <Alert id="amDeleteFailed" color="danger">
+                <Alert id="amDeleteFailed" data-testid="amDeleteFailed" color="danger">
                     {`There was a problem trying to delete "${this.props.reminder.title}".`}
                 </Alert>
             )
@@ -483,6 +500,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         {this.renderDeleteAllMessage()}
                         <Button
                             id="btnCancelDeleteAll"
+                            data-testid="btnCancelDeleteAll"
                             title="No"
                             onClick={this.closeDeleteAllModal}
                         >
@@ -490,6 +508,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         </Button>
                         <Button
                             id="btnDeleteAll"
+                            data-testid="btnDeleteAll"
                             title="Yes"
                             type="submit"
                             color="danger"
@@ -505,7 +524,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
     renderDeleteAllMessage = () => {
         return this.props.deletedSuccessful === false
             ? (
-                <Alert id="amDeleteFailed" color="danger">
+                <Alert id="amDeleteFailed" data-testid="amDeleteFailed" color="danger">
                     {`There was a problem trying to delete reminders from "${moment(this.state.calendarDate).format(process.env.REACT_APP_DATE_FORMAT)}".`}
                 </Alert>
             )
