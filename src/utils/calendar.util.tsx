@@ -1,5 +1,6 @@
 import { ICalendarItem, CalendarItemGroup } from "../components/calendar";
 import { DateUtil } from "./date.util";
+import moment from "moment";
 
 export class CalendarUtil {
     static generateCalendarItemDateKeys(calendarItem: ICalendarItem, dateTimeFormat: string): string[] {
@@ -21,27 +22,33 @@ export class CalendarUtil {
             const dateKeys = CalendarUtil.generateCalendarItemDateKeys(calendarItem, dateTimeFormat);
 
             calendarItem = { ...calendarItem, dateKeys };
-            calendarItemsGroupedByDate = CalendarUtil.groupCalendarItem(calendarItem, calendarItemsGroupedByDate);
+            calendarItemsGroupedByDate = CalendarUtil.groupCalendarItem(calendarItem, calendarItemsGroupedByDate, dateTimeFormat);
         }
 
         return calendarItemsGroupedByDate;
     }
 
-    static groupCalendarItem(calendarItem: ICalendarItem, calendarItemsGroupedByDate: CalendarItemGroup): CalendarItemGroup {
+    static groupCalendarItem(calendarItem: ICalendarItem, calendarItemsGroupedByDate: CalendarItemGroup, dateTimeFormat: string): CalendarItemGroup {
         if (calendarItem.dateKeys) {
             for (let i = 0; i < calendarItem.dateKeys.length; i++) {
                 const dateKey = calendarItem.dateKeys[i];
-                calendarItemsGroupedByDate = CalendarUtil.putCalendarItem(calendarItem, dateKey, calendarItemsGroupedByDate);
+                calendarItemsGroupedByDate = CalendarUtil.putCalendarItem(calendarItem, dateKey, calendarItemsGroupedByDate, dateTimeFormat);
             }
         }
 
         return calendarItemsGroupedByDate;
     }
 
-    static putCalendarItem(calendarItem: ICalendarItem, dateKey: string, calendarItemsGroupedByDate: CalendarItemGroup): CalendarItemGroup {
+    static putCalendarItem(calendarItem: ICalendarItem, dateKey: string, calendarItemsGroupedByDate: CalendarItemGroup, dateTimeFormat: string): CalendarItemGroup {
         return {
             ...calendarItemsGroupedByDate,
-            [dateKey]: [calendarItem].concat(calendarItemsGroupedByDate[dateKey] || [])
+            [dateKey]: [calendarItem]
+                .concat(calendarItemsGroupedByDate[dateKey] || [])
+                .sort((a: ICalendarItem, b: ICalendarItem) => {
+                    const aFromDateTimeInMillis = moment(a.fromDateTimeStr, dateTimeFormat).toDate().getTime();
+                    const bFromDateTimeInMillis = moment(b.fromDateTimeStr, dateTimeFormat).toDate().getTime();
+                    return aFromDateTimeInMillis - bFromDateTimeInMillis;
+                })
         };
     }
 }

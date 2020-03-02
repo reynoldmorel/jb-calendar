@@ -2,6 +2,7 @@ import { IReminder, ReminderGroup } from "../entties/reminder.entity";
 import { DateUtil } from "./date.util";
 import { WeatherService } from "../services/weather.service";
 import { ICalendarItem } from "../components/calendar/calendar-item";
+import moment from "moment";
 
 type DeleteResult = { newReminders: IReminder[], newRemindersGroupedByDate: ReminderGroup };
 type CityWeather = { [key: string]: string }
@@ -119,7 +120,14 @@ export class ReminderUtil {
     static putReminder(reminder: IReminder, dateKey: string, remindersGroupedByDate: ReminderGroup): ReminderGroup {
         return {
             ...remindersGroupedByDate,
-            [dateKey]: [reminder].concat(remindersGroupedByDate[dateKey] || [])
+            [dateKey]: [reminder]
+                .concat(remindersGroupedByDate[dateKey] || [])
+                .sort((a: IReminder, b: IReminder) => {
+                    const dateTimeFormat = `${process.env.REACT_APP_DATE_FORMAT} ${process.env.REACT_APP_TIME_FORMAT}`;
+                    const aFromDateTimeInMillis = moment(`${dateKey} ${a.fromTimeStr}`, dateTimeFormat).toDate().getTime();
+                    const bFromDateTimeInMillis = moment(`${dateKey} ${b.fromTimeStr}`, dateTimeFormat).toDate().getTime();
+                    return aFromDateTimeInMillis - bFromDateTimeInMillis;
+                })
         };
     }
 
