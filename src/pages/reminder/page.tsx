@@ -382,9 +382,16 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
             >
                 <Form onSubmit={this.delete}>
                     <ModalHeader toggle={this.closeDeleteModal}>
-                        About to delete a Reminder
+                        About to delete a Reminder - {this.props.reminder.title}
                     </ModalHeader>
                     <ModalBody>
+                        {this.props.reminder.recurrenceForAYear
+                            ? (
+                                <p>
+                                    This reminder has recurrence for the rest of the year. If you remove it, all recurrences will be deleted as well.
+                                </p>
+                            )
+                            : ""}
                         <p>
                             {`Are you sure you want to delete the reminder "${this.props.reminder.title}"?`}
                         </p>
