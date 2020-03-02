@@ -29,5 +29,3 @@ export const ReminderStoreInitialState: IReminderStore = {
     remindersForDateYearAndMonth: [],
     remindersGroupedByDate: {}
 };
-
-export type Store = { reminderStore: IReminderStore };

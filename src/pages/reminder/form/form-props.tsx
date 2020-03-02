@@ -1,7 +1,7 @@
 import { ThunkDispatch } from "redux-thunk";
 import { Action } from "redux";
 
-import { IReminderStore, Store } from "../../../redux/reminder/store.redux";
+import { IReminderStore } from "../../../redux/reminder/store.redux";
 import {
     validateTitle,
     validateDescription,
@@ -12,6 +12,7 @@ import {
 } from "./form-validations";
 import { IReminder } from "../../../entties/reminder.entity";
 import { ReminderService } from "../../../services/reminder.service";
+import { Store } from "../../../redux/config.redux";
 
 export interface IReminderFormProps {
     reminder: IReminder;
