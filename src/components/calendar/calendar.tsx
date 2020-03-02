@@ -1,6 +1,10 @@
-import React, { PureComponent } from "react";
-import { Row, Col, FormGroup, Button } from "reactstrap";
+import React, { Component } from "react";
+import { FormGroup, Button } from "reactstrap";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
+
+import "./calendar.css";
 
 import { ICalendarProps, CalendarDefaultProps } from "./calendar-props";
 import { ICalendarItem } from "./calendar-item";
@@ -9,7 +13,7 @@ import { CalendarDay } from "./calendar-day";
 
 type CalendarItemGroup = { [key: string]: ICalendarItem[] };
 
-export class Calendar extends PureComponent<ICalendarProps> {
+export class Calendar extends Component<ICalendarProps> {
 
     static defaultProps = CalendarDefaultProps;
 
@@ -53,54 +57,77 @@ export class Calendar extends PureComponent<ICalendarProps> {
 
     render() {
         return (
-            <div>
-                <Row className="m-5">
-                    <Col md="12">
-                        <FormGroup className="d-flex justify-content-between m-0 mb-1">
-                            <Button
-                                id="btnPrevYear"
-                                title="Previous Year"
-                                onClick={this.prevYear}
-                            >
-                                {"<"}
-                            </Button>
-                            <span>
-                                <strong>{this.props.date.getFullYear()}</strong>
-                            </span>
-                            <Button
-                                id="btnNextYear"
-                                title="Next Year"
-                                onClick={this.nextYear}
-                            >
-                                {">"}
-                            </Button>
-                        </FormGroup>
-                        <FormGroup className="d-flex justify-content-between m-0 mb-1">
-                            <Button
-                                id="btnPrevMonth"
-                                title="Previous Month"
-                                onClick={this.prevMonth}
-                            >
-                                {"<"}
-                            </Button>
-                            <span>
-                                <strong>{moment(this.props.date).format("MMMM")}</strong>
-                            </span>
-                            <Button
-                                id="btnNextMonth"
-                                title="Next Month"
-                                onClick={this.nextMonth}
-                            >
-                                {">"}
-                            </Button>
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row className="m-5">
-                    <Col md="12">
-                        {this.renderCalendarDays()}
-                    </Col>
-                </Row>
+            <div className="jb-calendar">
+                <div>
+                    <FormGroup className="d-flex justify-content-between m-0 year-band">
+                        <Button
+                            id="btnPrevYear"
+                            title="Previous Year"
+                            className="btn-arrows"
+                            onClick={this.prevYear}
+                        >
+                            <FontAwesomeIcon icon={faAngleLeft} />
+                        </Button>
+                        <span>
+                            <strong>{this.props.date.getFullYear()}</strong>
+                        </span>
+                        <Button
+                            id="btnNextYear"
+                            title="Next Year"
+                            className="btn-arrows"
+                            onClick={this.nextYear}
+                        >
+                            <FontAwesomeIcon icon={faAngleRight} />
+                        </Button>
+                    </FormGroup>
+                    <FormGroup className="d-flex justify-content-between m-0 month-band">
+                        <Button
+                            id="btnPrevMonth"
+                            title="Previous Month"
+                            className="btn-arrows"
+                            onClick={this.prevMonth}
+                        >
+                            <FontAwesomeIcon icon={faAngleLeft} />
+                        </Button>
+                        <span>
+                            <strong>{moment(this.props.date).format("MMMM")}</strong>
+                        </span>
+                        <Button
+                            id="btnNextMonth"
+                            title="Next Month"
+                            className="btn-arrows"
+                            onClick={this.nextMonth}
+                        >
+                            <FontAwesomeIcon icon={faAngleRight} />
+                        </Button>
+                    </FormGroup>
+                </div>
+                <div>
+                    <div className="days-name-col-container">
+                        <div className="days-name-col">
+                            Sunday
+                        </div>
+                        <div className="days-name-col">
+                            Monday
+                        </div>
+                        <div className="days-name-col">
+                            Tuesday
+                        </div>
+                        <div className="days-name-col">
+                            Wednesday
+                        </div>
+                        <div className="days-name-col">
+                            Thursday
+                        </div>
+                        <div className="days-name-col">
+                            Friday
+                        </div>
+                        <div className="days-name-col">
+                            Saturday
+                        </div>
+                    </div>
+                    {this.renderCalendarDays()}
+                </div>
             </div>
         );
     }
@@ -114,34 +141,50 @@ export class Calendar extends PureComponent<ICalendarProps> {
         let result: React.ReactNode[] = [];
         let daysCol: React.ReactNode[] = [];
 
+        const momentFirstDay = momentDate.startOf("month");
+        const firstDay = momentFirstDay.get("day");
+        let momentDateToComplete = momentFirstDay.subtract(firstDay, "days");
+
+        for (let i = firstDay; i > 0; i--) {
+            console.log(momentDateToComplete.toDate().toISOString())
+            const calendarDay = this.buildEmptyCalendarDay(momentDateToComplete);
+            daysCol = daysCol.concat([calendarDay]);
+            momentDateToComplete = momentDateToComplete.add(1, "days");
+        }
+
         for (let i = 1; i <= lastDay; i++) {
             momentDate = moment([year, month, i]);
             const calendarDay = this.buildCalendarDay(momentDate);
             daysCol = daysCol.concat([calendarDay]);
 
-            if (i % 7 === 0) {
+            if (daysCol.length === 7) {
                 const row = this.buildCalendarRow(momentDate.toDate(), daysCol);
                 result = result.concat([row]);
                 daysCol = [];
             }
         }
 
-        const row = this.buildCalendarRow(momentDate.toDate(), daysCol);
-        result = result.concat([row]);
+        if (daysCol.length > 0) {
+            const row = this.buildCalendarRow(momentDate.toDate(), daysCol);
+            result = result.concat([row]);
+        }
 
         return result;
     }
 
     buildCalendarRow = (date: Date, daysCol: React.ReactNode[]) => {
         return (
-            <Row key={`cdr-${date.toISOString()}`}>
+            <div
+                key={`cdr-${date.toISOString()}`}
+                className="day-col-container"
+            >
                 {daysCol}
-            </Row>
+            </div>
         );
     }
 
     buildCalendarDay = (momentDate: moment.Moment) => {
-        const { dateFormat, onClickDay } = this.props;
+        const { date, dateFormat, onClickDay } = this.props;
 
         const formattedMomentDate = momentDate.format(dateFormat);
         const items = this.calendarItemsGroupedByDate[formattedMomentDate] || [];
@@ -152,6 +195,21 @@ export class Calendar extends PureComponent<ICalendarProps> {
                 date={momentDate.toDate()}
                 items={items}
                 onClickDay={onClickDay}
+                selected={formattedMomentDate === moment(date).format(dateFormat)}
+            />
+        );
+    }
+
+    buildEmptyCalendarDay = (momentDate: moment.Moment) => {
+        const { dateFormat, onClickDay } = this.props;
+
+        const formattedMomentDate = momentDate.format(dateFormat);
+        return (
+            <CalendarDay
+                key={`cd-${formattedMomentDate}`}
+                date={momentDate.toDate()}
+                onClickDay={onClickDay}
+                disabled
             />
         );
     }

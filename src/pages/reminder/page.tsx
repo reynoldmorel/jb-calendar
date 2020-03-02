@@ -1,6 +1,10 @@
 import React, { PureComponent, MouseEvent } from "react";
 import { connect } from "react-redux";
 import { Alert, Button, Form, Modal, ModalHeader, ModalBody, ModalFooter, Table } from "reactstrap";
+import { faPencilAlt, faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import "./page.css";
 
 import { IReminderPageProps, MapStateToProps, MapDispatchToProps } from "./page-props";
 import ReminderForm from "./form/form";
@@ -42,7 +46,9 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
         setTimeout(this.props.resetReminderFlags, 2000);
     }
 
-    openCreateModal = () => {
+    openCreateModal = (e: MouseEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
         this.setState({ showCreateModal: true });
         this.clearReminder();
     }
@@ -157,23 +163,27 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
     render() {
         return (
             <div>
-                <Button
-                    id="btnOpenCreateModal"
-                    title="Create Reminder"
-                    onClick={this.openCreateModal}
-                >
-                    Create Reminder
-                </Button>
+                <Form onSubmit={this.openCreateModal}>
+                    <Button
+                        id="btnOpenCreateModal"
+                        title="Create Reminder"
+                        className="btn-create"
+                        type="submit"
+                        autoFocus
+                    >
+                        <FontAwesomeIcon icon={faPlus} />
+                    </Button>
 
-                <Calendar
-                    date={this.state.calendarDate}
-                    items={this.props.calendarItems}
-                    onDateChange={this.onCalendarDateChange}
-                    onClickDay={this.onCalendarClickDay}
-                />
+                    <Calendar
+                        date={this.state.calendarDate}
+                        items={this.props.calendarItems}
+                        onDateChange={this.onCalendarDateChange}
+                        onClickDay={this.onCalendarClickDay}
+                    />
+                </Form>
 
-                {this.renderViewRemindersForADayModal()}
                 {this.renderCreateModal()}
+                {this.renderViewRemindersForADayModal()}
                 {this.renderUpdateModal()}
                 {this.renderDeleteModal()}
             </div>
@@ -202,6 +212,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                             id="btnCancelCreate"
                             title="Cancel"
                             onClick={this.closeCreateModal}
+                            color="danger"
                         >
                             Cancel
                         </Button>
@@ -210,6 +221,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                             title="Create"
                             type="submit"
                             disabled={!this.props.formValid}
+                            color="success"
                         >
                             Create
                         </Button>
@@ -242,6 +254,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
             <Modal
                 isOpen={this.state.showViewRemindersForADayModal}
                 toggle={this.closeViewRemindersForADayModal}
+                className="view-reminder-modal"
             >
                 <ModalHeader toggle={this.closeViewRemindersForADayModal}>
                     {`Reminders for ${moment(this.state.calendarDate).format(process.env.REACT_APP_DATE_FORMAT)}`}
@@ -269,20 +282,24 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                                         <td>{r.city}</td>
                                         <td>{r.weather}</td>
                                         <td>
-                                            <Button
-                                                id="btnOpenUpdateModal"
-                                                title="Edit this Reminder"
-                                                onClick={(e) => this.openUpdateModal(r)}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                id="btnOpenDeleteModal"
-                                                title="Delete this Reminder"
-                                                onClick={(e) => this.openDeleteModal(r)}
-                                            >
-                                                Delete
-                                            </Button>
+                                            <div className="d-flex flex-row">
+                                                <Button
+                                                    id="btnOpenUpdateModal"
+                                                    title="Edit this Reminder"
+                                                    onClick={(e) => this.openUpdateModal(r)}
+                                                    className="btn-edit"
+                                                >
+                                                    <FontAwesomeIcon icon={faPencilAlt} />
+                                                </Button>
+                                                <Button
+                                                    id="btnOpenDeleteModal"
+                                                    title="Delete this Reminder"
+                                                    onClick={(e) => this.openDeleteModal(r)}
+                                                    className="btn-delete"
+                                                >
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </Button>
+                                            </div>
                                         </td>
                                     </tr>
                                 )
@@ -295,6 +312,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                         id="btnOkViewRemindersForADay"
                         title="Ok"
                         onClick={this.closeViewRemindersForADayModal}
+                        color="success"
                     >
                         Ok
                     </Button>
@@ -325,6 +343,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                             id="btnCancelUpdate"
                             title="Cancel"
                             onClick={this.closeUpdateModal}
+                            color="danger"
                         >
                             Cancel
                         </Button>
@@ -333,6 +352,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                             title="Update"
                             type="submit"
                             disabled={!this.props.formValid}
+                            color="success"
                         >
                             Update
                         </Button>
@@ -380,6 +400,7 @@ class ReminderPage extends PureComponent<IReminderPageProps, IReminderPageState>
                             id="btnDelete"
                             title="Yes"
                             type="submit"
+                            color="danger"
                         >
                             Yes
                         </Button>

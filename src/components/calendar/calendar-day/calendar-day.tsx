@@ -1,10 +1,11 @@
 import React, { PureComponent } from "react";
-import { Col, Row } from "reactstrap";
 
-import { ICalendarDayProps } from "./calendar-day-props";
+import { ICalendarDayProps, CalendarDayDefaultProps } from "./calendar-day-props";
 import { ICalendarItem } from "../calendar-item";
 
 export class CalendarDay extends PureComponent<ICalendarDayProps> {
+    static defaultProps = CalendarDayDefaultProps;
+
     onClickDay = () => {
         if (this.props.onClickDay) {
             const { date, items } = this.props;
@@ -17,34 +18,41 @@ export class CalendarDay extends PureComponent<ICalendarDayProps> {
         const { date } = this.props;
 
         return (
-            <Col
-                md="1"
+            <div
+                className={`day-col${this.props.disabled ? " disabled-day" : ""}${this.props.selected ? " current-day" : ""}`}
                 onClick={this.onClickDay}
             >
-                <span>{date.getDate()}</span>
+                <p
+                    style={{
+                        padding: "2px 7px",
+                        margin: "0"
+                    }}
+                >
+                    {date.getDate()}
+                </p>
                 {this.props.items.map(this.calendarDayMapper)}
-            </Col>
+            </div>
         );
     }
 
     calendarDayMapper = (calendarItem: ICalendarItem) => {
         return (
-            <Row
+            <div
                 key={`col-${calendarItem.fromDateTimeStr}${calendarItem.toDateTimeStr}`}
                 style={{
                     backgroundColor: calendarItem.bkgColor || "#6c757d"
                 }}
             >
-                <Col md="12">
-                    <span
-                        style={{
-                            color: calendarItem.fontColor || "#ffffff"
-                        }}
-                    >
-                        {calendarItem.displayText}
-                    </span>
-                </Col>
-            </Row>
+                <p
+                    style={{
+                        color: calendarItem.fontColor || "#ffffff",
+                        padding: "0px 5px",
+                        textAlign: "center"
+                    }}
+                >
+                    {calendarItem.displayText}
+                </p>
+            </div>
         );
     }
 }

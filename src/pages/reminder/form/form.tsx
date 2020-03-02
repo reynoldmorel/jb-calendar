@@ -1,6 +1,10 @@
 import React, { PureComponent, ChangeEvent } from "react";
 import { connect } from "react-redux";
 import { ColorResult, ChromePicker } from 'react-color';
+import { faFillDrip, faFont } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import "./form.css";
 
 import { IReminderFormProps, MapStateToProps, MapDispatchToProps } from "./form-props";
 import { Row, Col, FormGroup, Label, Input, Alert, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
@@ -80,7 +84,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
 
     render() {
         return (
-            <div>
+            <div className="form-reminder">
                 <Row>
                     <Col md="12">
                         <FormGroup>
@@ -181,17 +185,18 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                             <Button
                                 id="btnOpenBkgColorPickerModal"
                                 title="Pick a background color"
-                                className="mr-2"
+                                className="mr-2 btn-bkg-color"
                                 onClick={this.toggleBkgColorPickerModal}
                             >
-                                Pick a background color
+                                <FontAwesomeIcon icon={faFillDrip} />
                             </Button>
                             <Button
                                 id="btnOpenFontColorPickerModal"
                                 title="Pick a font color"
+                                className="btn-font-color"
                                 onClick={this.toggleFontColorPickerModal}
                             >
-                                Pick a font color
+                                <FontAwesomeIcon icon={faFont} />
                             </Button>
                         </FormGroup>
                         <FormGroup>
@@ -297,7 +302,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={this.toggleBkgColorPickerModal}>
+                    <Button onClick={this.toggleBkgColorPickerModal} color="success">
                         Ok
                     </Button>
                 </ModalFooter>
@@ -329,7 +334,7 @@ class ReminderForm extends PureComponent<IReminderFormProps, IReminderFormState>
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={this.toggleFontColorPickerModal}>
+                    <Button onClick={this.toggleFontColorPickerModal} color="success">
                         Ok
                     </Button>
                 </ModalFooter>

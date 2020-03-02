@@ -1,0 +1,13 @@
+.form-reminder .btn-bkg-color,
+.form-reminder .btn-font-color {
+    background-color: #58a3e4;
+}
+
+.form-reminder .btn-bkg-color:hover,
+.form-reminder .btn-bkg-color:active,
+.form-reminder .btn-bkg-color:focus,
+.form-reminder .btn-font-color:hover,
+.form-reminder .btn-font-color:active,
+.form-reminder .btn-font-color:focus {
+    background-color: #3c7fb9 !important;
+}

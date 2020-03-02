@@ -1,0 +1,87 @@
+@media screen and (max-width: 767px) {
+    .jb-calendar .day-col {
+        width: 100%;
+        margin: 2px 0px;
+    }
+
+    .jb-calendar .days-name-col-container,
+    .jb-calendar .days-name-col {
+        display: none;
+    }
+
+    .jb-calendar .day-col-container {
+        flex-direction: column;
+        display: flex;
+    }
+}
+
+@media screen and (min-width: 768px) {
+
+    .jb-calendar .day-col-container,
+    .jb-calendar .days-name-col-container {
+        flex-direction: row;
+        display: flex;
+    }
+
+    .jb-calendar .day-col,
+    .jb-calendar .days-name-col {
+        width: 14%;
+    }
+
+    .jb-calendar .day-col {
+        margin: 2px;
+    }
+}
+
+.jb-calendar .day-col .reminder {
+    margin: 5px 0px;
+}
+
+.jb-calendar .current-day {
+    border: 2px solid #d00202 !important;
+    color: #d00202 !important;
+}
+
+.jb-calendar .disabled-day {
+    background-color: #e2e2e2;
+}
+
+.jb-calendar .days-name-col {
+    text-align: center;
+}
+
+.jb-calendar .day-col {
+    height: 150px;
+    overflow-y: auto;
+    border: 1px solid;
+}
+
+.jb-calendar .days-name-col {
+    margin: 2px;
+}
+
+.jb-calendar .btn-arrows {
+    background-color: #ffffff00;
+    border: 0;
+    padding: 5px 30px;
+}
+
+.jb-calendar .year-band,
+.jb-calendar .month-band {
+    background-color: #58a3e4;
+}
+
+.jb-calendar .year-band,
+.jb-calendar .month-band {
+    color: #ffffff;
+    align-items: center;
+}
+
+.jb-calendar .year-band .btn-arrows:hover,
+.jb-calendar .year-band .btn-arrows:active,
+.jb-calendar .year-band .btn-arrows:focus,
+.jb-calendar .month-band .btn-arrows:hover,
+.jb-calendar .month-band .btn-arrows:active,
+.jb-calendar .month-band .btn-arrows:focus {
+    background-color: #3c7fb9 !important;
+}

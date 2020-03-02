@@ -1,0 +1,32 @@
+.view-reminder-modal .btn-edit,
+.view-reminder-modal .btn-delete {
+    background-color: #4e4e4e00;
+    border: 0;
+}
+
+.view-reminder-modal .btn-edit:hover,
+.view-reminder-modal .btn-edit:active,
+.view-reminder-modal .btn-edit:focus,
+.view-reminder-modal .btn-delete:hover,
+.view-reminder-modal .btn-delete:active,
+.view-reminder-modal .btn-delete:focus {
+    background-color: #4e4e4e52 !important;
+}
+
+.app .btn-create {
+    background-color: #2dab48;
+    border: 0;
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    border-radius: 30px;
+    height: 60px;
+    width: 60px;
+    font-size: 22px;
+}
+
+.app .btn-create:hover,
+.app .btn-create:active,
+.app .btn-create:focus {
+    background-color: #28803b !important;
+}
